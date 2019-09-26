@@ -3,7 +3,7 @@
 // @author              cabrito
 // @namespace           https://github.com/cabrito
 // @description         Automatically fills out the Change Major form
-// @version             1.5
+// @version             1.5RC
 // @include             https://*.edu*/Student/Planning/Advisors/Advise/*
 // @include             https://*.edu/*advisor-major-change-request/*
 // @require             https://code.jquery.com/jquery-3.4.1.min.js

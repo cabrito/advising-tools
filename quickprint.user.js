@@ -3,7 +3,7 @@
 // @author              cabrito
 // @namespace           https://github.com/cabrito
 // @description         Removes the requirement of Colleague UI to go through Adobe Reader to print.
-// @version             1.8
+// @version             1.8RC
 // @include             https://*.edu*/UI/home/*
 // @require             https://code.jquery.com/jquery-3.4.1.min.js
 // @grant               GM_info
@@ -11,8 +11,9 @@
 // @grant               GM.setValue
 // ==/UserScript==
 
+// For compatibility and security, we use an IIFE (Immediately invoked function expression)
 (function() {
-    "use strict";
+    "use strict";   // Makes the code "safer" to prevent us from using undeclared variables.
 
     /**
      *  The core of the logic to make appropriate changes to the document.
@@ -51,7 +52,7 @@
                 var url = $("#fileDownloadBtn").attr("href");
 
                 // Only make a new button if we're in the 'Save As' dialog.
-                if (!isPdf(url))
+                if (!hasFileExt(url))
                 {
                     var adjustedBtn = $cloneBtn($("#fileDownloadBtn"))
                                                 .attr("id", "quickprint")
@@ -110,7 +111,7 @@
                 $(iframe).get(0).contentWindow.print();
             });
         }).fail(function() {
-            alert("ERROR: Colleague refused to provide data to us. Please log out and try again.");
+            alert("ERROR: Colleague failed to provide data to us. Please log out and try again.");
         });;
     }
 
@@ -122,14 +123,14 @@
     //////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     *  Decides whether the API URL refers to a PDF or not.
+     *  Decides whether or not the url has a file extension
      *  @param  url A URL provided as a string.
      *  @return     boolean
      */
-    function isPdf(url)
+    function hasFileExt(url)
     {
-        var extension = url.substring(url.lastIndexOf('.') + 1, url.lastIndexOf('?') );
-        return (extension === "pdf");
+        var filename = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('?'));
+        return filename.lastIndexOf('.') >= 0;
     }
 
     /**
@@ -176,8 +177,7 @@
 
     /* Begin document observation */
     observer.observe(document,	{
-                                    childList: true,
-                                    subtree: true
-    							}
-    );
+        childList: true,
+        subtree: true
+    });
 }());

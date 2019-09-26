@@ -3,14 +3,15 @@
 // @author              cabrito
 // @namespace           https://github.com/cabrito
 // @description         Aids the advisor to quickly distinguish between first and second long semester terms in Student Planner.
-// @version             1.4
+// @version             1.5RC
 // @include             https://*.edu*/Student/Planning/Advisors/Advise/*
 // @require             https://code.jquery.com/jquery-3.4.1.min.js
 // @grant               GM_info
 // ==/UserScript==
 
+// For compatibility and security, we use an IIFE (Immediately invoked function expression)
 (function() {
-    "use strict";
+    "use strict";   // Makes the code "safer" to prevent us from using undeclared variables.
 
     // Helpful switches that can be turned on and off as needed (on = true, off = false)
     const BANNED_WARNING_ENABLED    = true;
@@ -35,13 +36,13 @@
         if (COLOR_ALLOWED)  colorTable();
 
         // Filter the search schedule
-        if ($(".search-nestedaccordionitem").length > 0)
+        if ($(".search-nestedaccordionitem").length)
         {
-            if ($("#keyword").val().indexOf("@1") !== -1)
+            if ($("#keyword").val().indexOf("@1") >= 0)
             {
                 filterClasses(1);
             }
-            else if ($("#keyword").val().indexOf("@2") !== -1)
+            else if ($("#keyword").val().indexOf("@2") >= 0)
             {
                 filterClasses(2);
             }
@@ -69,28 +70,28 @@
 
                 if (termVal === 1)
                 {
-                    if ((section.indexOf("WK") !== -1) && ((termId !== 1) && (termId !== 3)))
+                    if ((section.indexOf("WK") >= 0) && ((termId !== 1) && (termId !== 3)))
                     {
                         if (!$(classBox).is(":hidden"))
                             $(classBox).detach();
                     }
                     else if (termId >= 3)
                     {
-                        if (section.indexOf("WK") === -1)
+                        if (section.indexOf("WK") < 0)
                             if (!$(classBox).is(":hidden"))
                                 $(classBox).detach();
                     }
                 }
                 else if (termVal === 2)
                 {
-                    if (section.indexOf("WK") !== -1 && ((termId !== 2) && (termId !== 4)))
+                    if (section.indexOf("WK") >= 0 && ((termId !== 2) && (termId !== 4)))
                     {
                         if (!$(classBox).is(":hidden"))
                             $(classBox).detach();
                     }
                     else if ((termId < 3) || (termId >= 5))
                     {
-                        if (section.indexOf("WK") === -1)
+                        if (section.indexOf("WK") < 0)
                             if (!$(classBox).is(":hidden"))
                                 $(classBox).detach();
                     }
@@ -117,7 +118,7 @@
         // Get each of the rows
         var rows = $("table.esg-table.esg-table--no-mobile").find("tbody > tr");
 
-    	if (rows.length > 0)
+    	if (rows.length)
         {
           	// For each row, grab data from each column
         	$.each(rows, function (i, $row) {
@@ -146,7 +147,7 @@
                         "color":            COLOR_BANNED_TEXT});
         }
         // Is it a Weekend section?
-        else if (section.indexOf("WK") !== -1)
+        else if (section.indexOf("WK") >= 0)
         {
             // Is it during the 1st 8-weeks?
             if ((termId === 1) || (termId === 3))
@@ -180,11 +181,11 @@
         var courseText = $.trim($(columns).eq(COURSE_TEXT_COLUMN).text());
         var courseInfoStr = courseText.substring(0, courseText.indexOf(":")).replace(/-/g,"_");
 
-        if (courseInfoStr.indexOf("_") !== -1)
+        if (courseInfoStr.indexOf("_") >= 0)
         {
           	var splitText = courseInfoStr.split("_");
           	if (splitText.length === 3)
-          			return splitText[2];
+          			return splitText.pop();
           	else
               	return "";
         }
@@ -267,10 +268,7 @@
 
     /* Begin document observation */
     observer.observe(document,	{
-                                    childList: true,
-                                    subtree: true
-    							}
-    );
-
-
+        childList: true,
+        subtree: true
+    });
 }());

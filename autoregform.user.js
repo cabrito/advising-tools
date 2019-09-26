@@ -3,7 +3,7 @@
 // @author              cabrito
 // @namespace           https://github.com/cabrito
 // @description         Automatically fills out registration forms with the click of a button!
-// @version             1.8
+// @version             1.8RC
 // @include             https://*.edu*/UI/home/*
 // @include             https://*.edu*/Student/Planning/Advisors/Advise/*
 // @require             https://code.jquery.com/jquery-3.4.1.min.js
@@ -69,7 +69,7 @@
                         parseTable();
                     } catch (error) {
                         console.error(error);
-                        alert("ERROR: Unable read classes from table! (Did you plan everything to the section level?)");
+                        alert("ERROR: Unable to read classes from table! (Did you plan everything to the section level?)");
                     }
                 });
             }
@@ -240,10 +240,6 @@
                 if (typeof edited === "undefined")
                 {
                     $("#popup-lookup").attr("edited", "true");
-                    $("#popup-lookup").trigger("click");
-                    $("#popup-lookup").trigger("compositionstart");
-                    $("#popup-lookup").trigger("input");
-                    $("#popup-lookup").trigger("compositionend");
                     $("#popup-lookup").val(scheduleResult.studentId);
                 }
             }
@@ -255,10 +251,6 @@
                 if (typeof edited === "undefined")
                 {
                     $("#JS-VAR1").attr("edited", "true");
-                    $("#JS-VAR1").trigger("click");
-                    $("#JS-VAR1").trigger("compositionstart");
-                    $("#JS-VAR1").trigger("input");
-                    $("#JS-VAR1").trigger("compositionend");
                     $("#JS-VAR1").val(scheduleResult.semester);
                 }
             }
@@ -279,7 +271,7 @@
                     var url = $("#fileDownloadBtn").attr("href");
 
                     // Only make a new button if we're in the 'Save As' dialog.
-                    if (!isPdf(url))
+                    if (!hasFileExt(url))
                     {
                         var adjustedBtn = $cloneBtn($("#fileDownloadBtn"))
                                                     .attr("id", "quickprint")
@@ -332,7 +324,7 @@
                 $(iframe).get(0).contentWindow.print();
             });
         }).fail(function() {
-            alert("ERROR: Colleague refused to provide data to us. Please log out and try again.");
+            alert("ERROR: Colleague failed to provide data to us. Please log out and try again.");
         });
     }
 
@@ -385,19 +377,28 @@
         // If there are any typos we wish to fix, we fix them here.
         if (FIX_TYPOS_ENABLED)  data = fixTypos(data);
 
-        var preText = data.substring(0, data.indexOf(PRETEXT_BREAKER));
-        var postText = data.substring(data.lastIndexOf(POSTTEXT_BREAKER) + POSTTEXT_BREAKER.length + 1);
+        // Idiot-proofing: prepare the data for regform table insertion if necessary.
+        if (data.indexOf(PRETEXT_BREAKER) >= 0)
+        {
+            var preText = data.substring(0, data.indexOf(PRETEXT_BREAKER));
+            var postText = data.substring(data.lastIndexOf(POSTTEXT_BREAKER) + POSTTEXT_BREAKER.length + 1);
 
-        $(iframe).contents().find("#textData").text(preText);
-        $(createRegTable()).appendTo($(iframe).contents().find("body"));
+            $(iframe).contents().find("#textData").text(preText);
+            $(createRegTable()).appendTo($(iframe).contents().find("body"));
 
-        // Put the data into the iframe.
-        $("<pre>", {
-            id:  "textDataPost",
-            style: "border: none",
-        }).appendTo($(iframe).contents().find("body"));
+            // Put the data into the iframe.
+            $("<pre>", {
+                id:  "textDataPost",
+                style: "border: none",
+            }).appendTo($(iframe).contents().find("body"));
 
-        $(iframe).contents().find("#textDataPost").text(postText);
+            $(iframe).contents().find("#textDataPost").text(postText);
+        }
+        // Otherwise, just put the data into the iframe
+        else
+        {
+            $(iframe).contents().find("#textData").text(data);
+        }
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -490,14 +491,14 @@
     }
 
     /**
-     *  Decides whether the API URL refers to a PDF or not.
+     *  Decides whether or not the url has a file extension
      *  @param  url A URL provided as a string.
      *  @return     boolean
      */
-    function isPdf(url)
+    function hasFileExt(url)
     {
-        var extension = url.substring(url.lastIndexOf('.') + 1, url.lastIndexOf('?') );
-        return (extension === "pdf");
+        var filename = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('?'));
+        return filename.lastIndexOf('.') >= 0;
     }
 
     /**
