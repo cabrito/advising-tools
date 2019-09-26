@@ -13,7 +13,7 @@
 
 // For compatibility and security, we use an IIFE (Immediately invoked function expression)
 (function() {
-    "use strict";
+    "use strict";   // Makes the code "safer" to prevent us from using undeclared variables.
 
     // You need to change this information before using!
     const ADVISOR_NAME              = "DO NOT PROCESS";
