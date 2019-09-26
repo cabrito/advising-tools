@@ -53,14 +53,14 @@
                 // Only make a new button if we're in the 'Save As' dialog.
                 if (!isPdf(url))
                 {
-                    var adjustedBtn = $("#fileDownloadBtn").clone()
+                    var adjustedBtn = $cloneBtn($("#fileDownloadBtn"))
                                                 .attr("id", "quickprint")
-                                                .attr("href", null)
-                                                .attr("class", "esg-button-style esg-button esg-button--primary")
                                                 .attr("type", "button");
                     $(adjustedBtn).text("Quickprint");
                     $("#fileDownloadBtn").replaceWith(adjustedBtn);
-                    adjustedBtn.on("click", function () { quickPrint(url); });
+                    adjustedBtn.on("click", function () {
+                        quickPrint(url);
+                    });
 
                     // PRINT IMMEDIATELY!!! The button solely exists as a failsafe.
                     quickPrint(url);
@@ -71,8 +71,7 @@
         // Remove the data window(s) when we're done.
       	if ($("#btn_close_report_browser").length)
         {
-          	$("#btn_close_report_browser").on("click", function ()
-            {
+          	$("#btn_close_report_browser").on("click", function () {
                 cleanUp();
             });
         }
@@ -161,11 +160,24 @@
             $("#dataWindow").remove();
     }
 
+    /**
+     *  Clones the given button
+     *  @param $btn A jQuery object containing a button
+     *  @return     Cloned button
+     */
+    function $cloneBtn($btn)
+    {
+        var $adjustedBtn = $btn.clone()
+                                .off()
+                                .attr("href", null)
+                                .removeAttr("data-bind");   // Student Planner places the click event in data-bind
+        return $adjustedBtn;
+    }
+
     /* Begin document observation */
     observer.observe(document,	{
                                     childList: true,
                                     subtree: true
     							}
     );
-
 }());
