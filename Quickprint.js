@@ -21,6 +21,15 @@
       	quickprintLogic();
     });
 
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //                                                                                          //
+    //                                      Colleague Functions                                 //
+    //          All functions here should apply to Colleague (exclusively, if possible)         //
+    //  Most of the code here is "existence-based", in that it will only execute if the given   //
+    //                                     elements exist.                                      //
+    //                                                                                          //
+    //////////////////////////////////////////////////////////////////////////////////////////////
+
     function quickprintLogic()
     {
         // If the Print Remote button exists, remove it and adjust the Save As dialog to say Quick Print.
@@ -60,26 +69,12 @@
         }
 
         // Remove the data window(s) when we're done.
-        if ($("#fileCloseBtn").length)
-        {
-            $("#fileCloseBtn").on("click", function ()
-                                            {
-                                                if ($("#dataWindow").length)
-                                                {
-                                                    $("#dataWindow").remove();
-                                                }
-                                            });
-        }
-
       	if ($("#btn_close_report_browser").length)
         {
           	$("#btn_close_report_browser").on("click", function ()
-                                            {
-                                                if ($("#dataWindow").length)
-                                                {
-                                                    $("#dataWindow").remove();
-                                                }
-                                            });
+            {
+                cleanUp();
+            });
         }
     }
 
@@ -91,6 +86,9 @@
      */
     function quickPrint(fileUrl)
     {
+        // In case we have some residual window, clean it up!
+        cleanUp();
+
         // Make the iframe...
         $("<iframe>", {
             id:  "dataWindow",
@@ -116,6 +114,13 @@
             alert("ERROR: Colleague refused to provide data to us. Please log out and try again.");
         });;
     }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //                                                                                          //
+    //                                  Utility Functions                                       //
+    //            Small code snippets that are vital, but hidden to prevent confusion           //
+    //                                                                                          //
+    //////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      *  Decides whether the API URL refers to a PDF or not.
@@ -145,6 +150,15 @@
         } else {
             return data.substring(data.indexOf("\f"));
         }
+    }
+
+    /**
+     *  Removes the hidden iframe window we may create.
+     */
+    function cleanUp()
+    {
+        if ($("#dataWindow").length)
+            $("#dataWindow").remove();
     }
 
     /* Begin document observation */

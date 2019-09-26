@@ -118,6 +118,11 @@
         });
     }
 
+    /**
+     *  Decides whether the given class row is an online class.
+     *  @param row  Row from the class schedule table.
+     *  @return boolean
+     */
     function isOnline(row)
     {
         var columns = $(row).find("td");
@@ -127,6 +132,11 @@
             return false;
     }
 
+    /**
+     *  Finds the course code, number, and section.
+     *  @param row  Row from the class schedule table.
+     *  @return Array of strings of length 3.
+     */
     function generateCourseInfoArray(row)
     {
         var columns = $(row).find("td");
@@ -140,12 +150,21 @@
           	return [];
     }
 
+    /**
+     *  Finds the student's ID in Student Planner.
+     *  @return ID Number as a formatted string.
+     */
     function parseId()
     {
         var str = $($("#user-profile-details").find("p")[1]).text();
         return $.trim(str.substring(str.indexOf(":") + 1));
     }
 
+    /**
+     *  Returns an array containing both the lecture times and the lab times.
+     *  @param row  Row from the class schedule table.
+     *  @return Array of strings of length 2.
+     */
     function parseTimes(row)
     {
         if (isOnline(row))
@@ -169,6 +188,10 @@
         return result;
     }
 
+    /**
+     *  Decides which term to use for Colleage and the table's terms.
+     *  @return String such as 20/SP
+     */
     function parseTerm()
     {
         var termText = $.trim($("#schedule-activeterm-text").text());
@@ -313,6 +336,10 @@
         });
     }
 
+    /**
+     *  Creates a table object for Colleague via the information provided from Student Planner.
+     *  @return Formatted table.
+     */
     function createRegTable()
     {
         var table = $("<table>").css(
@@ -348,6 +375,11 @@
         return table;
     }
 
+    /**
+     *  Inserts the table of classes appropriately into the regform sheet.
+     *  @param iframe   The iframe window loaded into the webpage.
+     *  @param data     Text data from Colleague.
+     */
     function formatRegForm(iframe, data)
     {
         // If there are any typos we wish to fix, we fix them here.
@@ -385,18 +417,28 @@
         return $adjustedBtn;
     }
 
+    /**
+     *  Fixes any annoying typos in the regform data.
+     *  @param data Text data.
+     *  @return Corrected data.
+     */
     function fixTypos(data)
     {
         // We pair the words such that the misspelling is on the left, and the correct spelling is on the right.
         var wordPairs = ["Menengitis",  "Meningitis",
                          "adivce",      "advice"];
         // Replace each instance of a misspelled word with the correct spelling in the data
-        for (var i = 1; i < wordPairs.length; i+=2) {
+        for (var i = 1; i < wordPairs.length; i += 2) {
             data = data.replace(wordPairs[i - 1], wordPairs[i]);
         }
         return data;
     }
 
+    /**
+     *  Decides which 8-week term the class is in, based on its section code.
+     *  @param  section The class's section code.
+     *  @return String
+     */
     function parseEightWeeksTerm(section)
     {
         var termText = $.trim($("#schedule-activeterm-text").text());
@@ -438,6 +480,10 @@
         }
     }
 
+    /**
+     *  Determines if data was sent over from Colleague AND it hasn't been expended.
+     *  @return boolean
+     */
     function isDataAvailable()
     {
         return !($.isEmptyObject(scheduleResult));
@@ -454,6 +500,9 @@
         return (extension === "pdf");
     }
 
+    /**
+     *  Removes the hidden iframe window we may create.
+     */
     function cleanUp()
     {
         if ($("#dataWindow").length)
