@@ -3,7 +3,7 @@
 // @author              cabrito
 // @namespace           https://github.com/cabrito
 // @description         Automatically fills out the Change Major form
-// @version             1.5RC
+// @version             1.5RC2
 // @include             https://*.edu*/Student/Planning/Advisors/Advise/*
 // @include             https://*.edu/*advisor-major-change-request/*
 // @require             https://code.jquery.com/jquery-3.4.1.min.js
@@ -85,11 +85,9 @@
                     moveToNotesTab();
                 });
 
-                if ($sampleCoursePlanBtn.length)
-                    $sampleCoursePlanBtn.replaceWith($changeMajorBtn);
-                // Otherwise, stick it right next to the "Print" button
-                else
-                    $changeMajorBtn.insertAfter("#print-roster");
+                // Then, press the Change Major button onto the page.
+                $changeMajorBtn.css({"float":"right"})                  // Makes the Change Major button appear in a more natural spot
+                                .insertAfter("#current-program");
             }
         }
     }
