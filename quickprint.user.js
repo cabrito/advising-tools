@@ -6,9 +6,7 @@
 // @version             1.8RC
 // @include             https://*.edu*/UI/home/*
 // @require             https://code.jquery.com/jquery-3.4.1.min.js
-// @grant               GM_info
-// @grant               GM.getValue
-// @grant               GM.setValue
+// @grant               none
 // ==/UserScript==
 
 // For compatibility and security, we use an IIFE (Immediately invoked function expression)
@@ -105,7 +103,10 @@
                 style: "border: none",
             }).appendTo($(iframe).contents().find("body"));
 
-            $(iframe).contents().find("#textData").text(formatData(data));
+            // We trim the end of the form data to help prevent blank pages from being printed.
+            var formData = formatData(data).trimEnd();
+
+            $(iframe).contents().find("#textData").text(formData);
         }, 'text').done(function() {
             $(iframe).ready(function() {
                 $(iframe).get(0).contentWindow.print();
