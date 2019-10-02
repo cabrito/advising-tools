@@ -3,10 +3,9 @@
 // @author              cabrito
 // @namespace           https://github.com/cabrito
 // @description         Aids the advisor to quickly distinguish between first and second long semester terms in Student Planner.
-// @version             1.5RC
+// @version             1.5RC2
 // @include             https://*.edu*/Student/Planning/Advisors/Advise/*
 // @require             https://code.jquery.com/jquery-3.4.1.min.js
-// @grant               GM_info
 // ==/UserScript==
 
 // For compatibility and security, we use an IIFE (Immediately invoked function expression)
@@ -23,6 +22,10 @@
     const COLOR_FIRST_TERM      = "peachpuff";
     const COLOR_SECOND_TERM     = "powderblue";
 
+    // Constants related to the term filter
+    const FILTER_IDENTIFIER_FIRST   = ["@1", "!1"];
+    const FILTER_IDENTIFIER_SECOND  = ["@2", "!2"];
+
     /**
      *  The core of the logic to make appropriate changes to the document.
      */
@@ -38,11 +41,11 @@
         // Filter the search schedule
         if ($(".search-nestedaccordionitem").length)
         {
-            if ($("#keyword").val().indexOf("@1") >= 0)
+            if (searchContains(FILTER_IDENTIFIER_FIRST))
             {
                 filterClasses(1);
             }
-            else if ($("#keyword").val().indexOf("@2") >= 0)
+            else if (searchContains(FILTER_IDENTIFIER_SECOND))
             {
                 filterClasses(2);
             }
@@ -133,7 +136,14 @@
      */
     function colorRow(row)
     {
-        const ROW_SEPARATION_STYLE  = "inset 0px 0px 5px rgba(0,0,0,0.5)";
+        const STYLE_ROW_SEPARATION  = "inset 0px 0px 5px rgba(0,0,0,0.5)";
+        const STYLE_TERM_FIRST      = {"background-color":  COLOR_FIRST_TERM,
+                                        "box-shadow":       STYLE_ROW_SEPARATION};
+        const STYLE_TERM_SECOND     = {"background-color":  COLOR_SECOND_TERM,
+                                        "box-shadow":       STYLE_ROW_SEPARATION};
+        const STYLE_BANNED_CLASS    = {"background-color":  COLOR_BANNED_CLASS,
+                                        "color":            COLOR_BANNED_TEXT};
+
         var section = getSection(row);
 
       	if (section.length === 0)
@@ -143,28 +153,37 @@
 
         if (isBannedClass(section))
         {
-            $(row).css({"background-color": COLOR_BANNED_CLASS,
-                        "color":            COLOR_BANNED_TEXT});
+            $(row).css(STYLE_BANNED_CLASS);
         }
         // Is it a Weekend section?
         else if (section.indexOf("WK") >= 0)
         {
             // Is it during the 1st 8-weeks?
             if ((termId === 1) || (termId === 3))
-                $(row).css({"background-color": COLOR_FIRST_TERM,
-                            "box-shadow":       ROW_SEPARATION_STYLE});
+                $(row).css(STYLE_TERM_FIRST);
             else
-                $(row).css({"background-color": COLOR_SECOND_TERM,
-                            "box-shadow":       ROW_SEPARATION_STYLE});
+                $(row).css(STYLE_TERM_SECOND);
         }
         else
         {
             if (termId < 3)
-                $(row).css({"background-color": COLOR_FIRST_TERM,
-                            "box-shadow":       ROW_SEPARATION_STYLE});
+                $(row).css(STYLE_TERM_FIRST);
             else if (termId < 5)
-                $(row).css({"background-color": COLOR_SECOND_TERM,
-                            "box-shadow":       ROW_SEPARATION_STYLE});
+                $(row).css(STYLE_TERM_SECOND);
+        }
+    }
+
+    /**
+     *  Determines if the search box contains one of the identifiers provided
+     *  @param identifiers
+     */
+    function searchContains(identifiers)
+    {
+        var $inputBox = $("#keyword");
+        for (var i = 0; i < identifiers.length; i++)
+        {
+            if ($inputBox.val().indexOf(identifiers[i]) >= 0)
+                return true;
         }
     }
 
