@@ -188,6 +188,7 @@
             if ($inputBox.val().indexOf(IDENTIFIERS[i]) >= 0)
                 return true;
         }
+        return false;
     }
 
     /**
