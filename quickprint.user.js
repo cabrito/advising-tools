@@ -116,7 +116,7 @@
         })
         // Otherwise, tell the user there was a problem.
         .fail(function() {
-            alert("ERROR: Colleague failed to provide data to us. Please log out and try again.");
+            alert("ERROR: Server failed to give data. Please try again, or resort to 'Export PDF'.");
         });;
     }
 
