@@ -21,6 +21,7 @@
     const URL_SPFRAG                    = "/Student/Planning/Advisors/Advise/";     // Fragment of URL used in Student Planner
     const PRETEXT_BREAKER               = "Class Key  | Course | Number | Section |   Time & Day   | Instructor";
     const POSTTEXT_BREAKER              = "----------------------";
+    const XADF_IDENTIFIER               = "DROP    COURSE ID    COURSE TITLE";
 
     var scheduleResult = {};
 
@@ -260,7 +261,8 @@
 
             if ($("#report-browser-pre-text").length)
             {
-              	if ($("#report-browser-pre-text").val().indexOf(PRETEXT_BREAKER) >= 0)
+              	if (($("#report-browser-pre-text").val().indexOf(PRETEXT_BREAKER) >= 0) ||
+                    ($("#report-browser-pre-text").val().indexOf(XADF_IDENTIFIER) >= 0))
                 {
                     // Set a flag on the pretext window that allows us to communicate
                     // with the Quickprint script to not execute its part, and instead
@@ -335,7 +337,7 @@
      *  Creates a table object for Colleague via the information provided from Student Planner.
      *  @return Formatted table.
      */
-    function createRegTable()
+    function createRegTable(data)
     {
         var table = $("<table>").css(
             {"width":"100%",
@@ -356,14 +358,19 @@
 
         // Fill out the table
         $.each(scheduleResult.scheduleArray, function (i, course) {
-            var row = $("<tr>").html(
-                "<td>" + course.code + "</td>" +
-                "<td>" + course.number + "</td>" +
-                "<td>" + course.section + "</td>" +
-                "<td>" + course.daysAndTime.lecture + "<br>" + course.daysAndTime.lab +"</td>" +
-                "<td>" + course.term +"</td>"
-            );
-            row.appendTo(tbody);
+            var courseStr = course.code + " " + course.number + " " + course.section;
+
+            if (data.indexOf(courseStr) < 0)
+            {
+                var row = $("<tr>").html(
+                    "<td>" + course.code + "</td>" +
+                    "<td>" + course.number + "</td>" +
+                    "<td>" + course.section + "</td>" +
+                    "<td>" + course.daysAndTime.lecture + "<br>" + course.daysAndTime.lab +"</td>" +
+                    "<td>" + course.term +"</td>"
+                );
+                row.appendTo(tbody);
+            }
         });
         tbody.appendTo(table);
 
@@ -392,7 +399,7 @@
             var postText = data.substring(data.lastIndexOf(POSTTEXT_BREAKER) + POSTTEXT_BREAKER.length + 1);
 
             $(iframe).contents().find("#textData").text(preText);
-            $(createRegTable()).appendTo($(iframe).contents().find("body"));
+            $(createRegTable(data)).appendTo($(iframe).contents().find("body"));
 
             // Put the data into the iframe.
             $("<pre>", {
@@ -453,7 +460,8 @@
                          "adivce",      "advice"];
         // Replace each instance of a misspelled word with the correct spelling in the data
         for (var i = 1; i < wordPairs.length; i += 2) {
-            data = data.replace(wordPairs[i - 1], wordPairs[i]);
+            var regexp = new RegExp(wordPairs[i - 1], "g");
+            data = data.replace(regexp, wordPairs[i]);
         }
         return data;
     }
