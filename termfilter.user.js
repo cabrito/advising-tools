@@ -183,7 +183,7 @@
     function searchContains(IDENTIFIERS)
     {
         var $inputBox = $("#keyword");
-        for (const i of IDENTIFIERS)
+        for (const i in IDENTIFIERS)
         {
             if ($inputBox.val().indexOf(IDENTIFIERS[i]) >= 0)
                 return true;
