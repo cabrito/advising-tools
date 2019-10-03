@@ -107,11 +107,15 @@
             var formData = formatData(data).trimEnd();
 
             $(iframe).contents().find("#textData").text(formData);
-        }, 'text').done(function() {
+        }, 'text')
+        // If collecting the data was successful, print the window
+        .done(function() {
             $(iframe).ready(function() {
                 $(iframe).get(0).contentWindow.print();
             });
-        }).fail(function() {
+        })
+        // Otherwise, tell the user there was a problem.
+        .fail(function() {
             alert("ERROR: Colleague failed to provide data to us. Please log out and try again.");
         });;
     }
@@ -136,21 +140,19 @@
 
     /**
      *	Fixes the problem encountered when the AUX code prints at the top of RGN statements.
-     *	@param	data	Text data provided from Colleague
-     *	@return				Either the same input text, or all the text after the first pagebreak.
+     *	@param	data     Text data provided from Colleague
+     *	@return          Either the same input text, or all the text after the first pagebreak.
      */
     function formatData(data)
     {
-      	// Uses regexp to remove all whitespace characters globally in the data.
-        var newStr = data.replace(/\s/g, '');
+      	// Used to determine if we have RGN data
+        var newStr = data.trimStart();
 
       	// In RGN statements, the first non-whitespace character is "#". We skip everything until the first pagebreak \f
-        if (newStr.charAt(0) !== "#")
-        {
+        if (newStr.charAt(0) !== '#')
             return data;
-        } else {
-            return data.substring(data.indexOf("\f"));
-        }
+        else
+            return data.substring(data.indexOf("\f") + 1);
     }
 
     /**

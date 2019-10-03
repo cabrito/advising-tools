@@ -3,9 +3,10 @@
 // @author              cabrito
 // @namespace           https://github.com/cabrito
 // @description         Aids the advisor to quickly distinguish between first and second long semester terms in Student Planner.
-// @version             1.5RC2
+// @version             2.0
 // @include             https://*.edu*/Student/Planning/Advisors/Advise/*
 // @require             https://code.jquery.com/jquery-3.4.1.min.js
+// @grant               none
 // ==/UserScript==
 
 // For compatibility and security, we use an IIFE (Immediately invoked function expression)
@@ -22,7 +23,7 @@
     const COLOR_FIRST_TERM      = "peachpuff";
     const COLOR_SECOND_TERM     = "powderblue";
 
-    // Constants related to the term filter
+    // Here, you can define what you can type into the search box to filter for a specific term. '!' is preferred for speed.
     const FILTER_IDENTIFIER_FIRST   = ["@1", "!1"];
     const FILTER_IDENTIFIER_SECOND  = ["@2", "!2"];
 
@@ -30,10 +31,10 @@
      *  The core of the logic to make appropriate changes to the document.
      */
     var observer = new MutationObserver(function (mutations, mi) {
-        studentPlannerLogic();
+        spFix();
     });
 
-    function studentPlannerLogic()
+    function spFix()
     {
       	// Color code the rows of the class schedule table
         if (COLOR_ALLOWED)  colorTable();
@@ -51,65 +52,52 @@
             }
 
             // Grays out "banned" classes
-            filterClasses(-1);
+            if (BANNED_WARNING_ENABLED)     shadeBannedClasses();
         }
     }
 
     /**
-     *  Filters classes in the search menu to either disappear to appear "banned" to the user.
+     *  Filters classes in the search menu to either disappear or to appear "banned" to the user.
      *  @param  termVal     Which 8-week term you want to search
      */
     function filterClasses(termVal)
     {
-        if ((termVal === 1) || (termVal === 2))
-        {
-            $(".search-nestedaccordionitem").each(function (i) {
-                var classBox = $(".search-nestedaccordionitem").eq(i);
-                var classTitle = $.trim($(classBox).find("a").text());
-                var section = classTitle.substring(classTitle.lastIndexOf(" ") + 1);
-
-                // Check the 2nd character.
-                var termId = parseInt(section.charAt(1), 10);
-
-                if (termVal === 1)
-                {
-                    if ((section.indexOf("WK") >= 0) && ((termId !== 1) && (termId !== 3)))
-                    {
-                        if (!$(classBox).is(":hidden"))
-                            $(classBox).detach();
-                    }
-                    else if (termId >= 3)
-                    {
-                        if (section.indexOf("WK") < 0)
-                            if (!$(classBox).is(":hidden"))
-                                $(classBox).detach();
-                    }
-                }
-                else if (termVal === 2)
-                {
-                    if (section.indexOf("WK") >= 0 && ((termId !== 2) && (termId !== 4)))
-                    {
-                        if (!$(classBox).is(":hidden"))
-                            $(classBox).detach();
-                    }
-                    else if ((termId < 3) || (termId >= 5))
-                    {
-                        if (section.indexOf("WK") < 0)
-                            if (!$(classBox).is(":hidden"))
-                                $(classBox).detach();
-                    }
-                }
-            });
-        }
-
-        // Here so that the banned classes are indicated in the search results if the user didn't specify @1 or @2
         $(".search-nestedaccordionitem").each(function (i) {
             var classBox = $(".search-nestedaccordionitem").eq(i);
             var classTitle = $.trim($(classBox).find("a").text());
             var section = classTitle.substring(classTitle.lastIndexOf(" ") + 1);
 
-            if (isBannedClass(section))
-                $(classBox).css("filter", "brightness(0.5)");
+            // Check the 2nd character.
+            var termId = parseInt(section.charAt(1), 10);
+
+            if (termVal === 1)
+            {
+                if ((section.indexOf("WK") >= 0) && ((termId !== 1) && (termId !== 3)))
+                {
+                    if (!$(classBox).is(":hidden"))
+                        $(classBox).detach();
+                }
+                else if (termId >= 3)
+                {
+                    if (section.indexOf("WK") < 0)
+                        if (!$(classBox).is(":hidden"))
+                            $(classBox).detach();
+                }
+            }
+            else if (termVal === 2)
+            {
+                if (section.indexOf("WK") >= 0 && ((termId !== 2) && (termId !== 4)))
+                {
+                    if (!$(classBox).is(":hidden"))
+                        $(classBox).detach();
+                }
+                else if ((termId < 3) || (termId >= 5))
+                {
+                    if (section.indexOf("WK") < 0)
+                        if (!$(classBox).is(":hidden"))
+                            $(classBox).detach();
+                }
+            }
         });
     }
 
@@ -142,7 +130,8 @@
         const STYLE_TERM_SECOND     = {"background-color":  COLOR_SECOND_TERM,
                                         "box-shadow":       STYLE_ROW_SEPARATION};
         const STYLE_BANNED_CLASS    = {"background-color":  COLOR_BANNED_CLASS,
-                                        "color":            COLOR_BANNED_TEXT};
+                                        "color":            COLOR_BANNED_TEXT,
+                                        "font-weight":      "bold"};
 
         var section = getSection(row);
 
@@ -173,16 +162,30 @@
         }
     }
 
+    function shadeBannedClasses()
+    {
+        const STYLE_BANNED_SEARCH = {"filter":"brightness(0.5)"};
+        // Here so that the banned classes are indicated in the search results if the user didn't specify @1 or @2
+        $(".search-nestedaccordionitem").each(function (i) {
+            var classBox = $(".search-nestedaccordionitem").eq(i);
+            var classTitle = $.trim($(classBox).find("a").text());
+            var section = classTitle.substring(classTitle.lastIndexOf(" ") + 1);
+
+            if (isBannedClass(section))
+                $(classBox).css(STYLE_BANNED_SEARCH);
+        });
+    }
+
     /**
      *  Determines if the search box contains one of the identifiers provided
      *  @param identifiers
      */
-    function searchContains(identifiers)
+    function searchContains(IDENTIFIERS)
     {
         var $inputBox = $("#keyword");
-        for (var i = 0; i < identifiers.length; i++)
+        for (const i of IDENTIFIERS)
         {
-            if ($inputBox.val().indexOf(identifiers[i]) >= 0)
+            if ($inputBox.val().indexOf(IDENTIFIERS[i]) >= 0)
                 return true;
         }
     }

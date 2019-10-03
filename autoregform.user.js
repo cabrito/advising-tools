@@ -3,7 +3,7 @@
 // @author              cabrito
 // @namespace           https://github.com/cabrito
 // @description         Automatically fills out registration forms with the click of a button!
-// @version             1.8RC
+// @version             2.0
 // @include             https://*.edu*/UI/home/*
 // @include             https://*.edu*/Student/Planning/Advisors/Advise/*
 // @require             https://code.jquery.com/jquery-3.4.1.min.js
@@ -144,7 +144,7 @@
         var courseText = $.trim($(columns).eq(COURSE_TITLE).text());
         var courseInfoStr = courseText.substring(0, courseText.indexOf(":")).replace(/-/g,"_");
 
-        if (courseInfoStr.indexOf("_") !== -1)
+        if (courseInfoStr.indexOf("_") >= 0)
             return courseInfoStr.split("_");
         else
           	return [];
@@ -179,7 +179,7 @@
             var timeAndDateLine = $(divArr).eq(k);
             var meetTime = $.trim($(timeAndDateLine).text());
 
-            if ((meetTime.indexOf("/") === -1) && (meetTime !== ""))
+            if ((meetTime.indexOf("/") < 0) && (meetTime !== ""))
                 result.push(meetTime);
         });
 
@@ -241,6 +241,9 @@
                 {
                     $("#popup-lookup").attr("edited", "true");
                     $("#popup-lookup").val(scheduleResult.studentId);
+
+                    // Due to the text insertion bug, we inform the user what to do to validate the text.
+                    insertTooltip("Press Right Arrow, Space, then Enter.");
                 }
             }
 
@@ -363,7 +366,12 @@
             row.appendTo(tbody);
         });
         tbody.appendTo(table);
-        $(table).find("td, th").css({"border-style":"dashed","border-width":"thin"});
+
+        const STYLE_TABLE = {"border-style":"dashed",
+                             "border-width":"thin",
+                             "font-family":"monospace",
+                             "font-size":"120%"}
+        $(table).find("td, th").css(STYLE_TABLE);
         return table;
     }
 
@@ -399,6 +407,21 @@
         {
             $(iframe).contents().find("#textData").text(data);
         }
+    }
+
+    /**
+     *  Inserts a tooltip in the modal popup window.
+     *  @param msg  The message to display to the user.
+     */
+    function insertTooltip(msg)
+    {
+        const STYLE_TOOLTIP = {"font-weight":"bold",
+                                "color":"DarkSlateBlue"};
+        $("<p>", {
+            id:  "regform-tooltip"
+        }).css(STYLE_TOOLTIP)
+        .appendTo("#modalMessageContainer")
+        .text(msg);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -438,7 +461,7 @@
     /**
      *  Decides which 8-week term the class is in, based on its section code.
      *  @param  section The class's section code.
-     *  @return String
+     *  @return         String
      */
     function parseEightWeeksTerm(section)
     {
