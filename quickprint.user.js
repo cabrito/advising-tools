@@ -6,7 +6,6 @@
 // @version             2.0
 // @include             https://*.edu*/UI/home/*
 // @require             https://code.jquery.com/jquery-3.4.1.min.js
-// @grant               none
 // ==/UserScript==
 
 // For compatibility and security, we use an IIFE (Immediately invoked function expression)

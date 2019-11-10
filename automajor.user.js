@@ -9,6 +9,7 @@
 // @require             https://code.jquery.com/jquery-3.4.1.min.js
 // @grant               GM.getValue
 // @grant               GM.setValue
+// @grant               GM.deleteValue
 // ==/UserScript==
 
 // For compatibility and security, we use an IIFE (Immediately invoked function expression)
@@ -16,12 +17,15 @@
     "use strict";   // Makes the code "safer" to prevent us from using undeclared variables.
 
     // You need to change this information before using!
-    const ADVISOR_NAME              = "DO NOT PROCESS";
-    const ADVISOR_EMAIL             = "TESTING. PLEASE IGNORE";
+    const ADVISOR_NAME              = "CHANGE THIS IN THE SCRIPT";
+    const ADVISOR_EMAIL             = "CHANGE THIS IN THE SCRIPT@odessa.edu";
     const PASSWORD                  = "SSEM";
+    const MOVE_TO_NOTES_TAB_ENABLED = true;
+
+    // In the event that the URL for the major change form/Student Planner changes, you will need to update this with the correct URLs.
+    // MAKE SURE THE LINK GOES IN BETWEEN THE QUOTES!!!
     const URL_MAJOR_CHANGE_FORM     = "https://www.odessa.edu/current-students/records/faculty/advisor-major-change-request/index.html";
     const URL_SPFRAG                = "/Student/Planning/Advisors/Advise/";
-    const MOVE_TO_NOTES_TAB_ENABLED = true;
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                          //
@@ -82,7 +86,7 @@
                     window.open(URL_MAJOR_CHANGE_FORM, "_blank");
 
                     // As a convenience, we swap to the Notes tab, because that's where we're likely to need to go next.
-                    moveToNotesTab();
+                    if (MOVE_TO_NOTES_TAB_ENABLED)  moveToNotesTab();
                 });
 
                 // Then, press the Change Major button onto the page.
@@ -166,6 +170,12 @@
                 $("[id='New Major']").val(MAJOR_CHANGE_DATA.newMajor);
                 $("[id='New Major Code']").val(MAJOR_CHANGE_DATA.newMajorCode);
 
+                // Warn the user that they forgot to edit their name and such in the script
+                if ($("[id='Advisor Name']").val() === "CHANGE THIS IN THE SCRIPT")
+                    highlightGroup($("[id='Advisor Name']"));
+                if ($("[name='email']").val() === "CHANGE THIS IN THE SCRIPT@odessa.edu")
+                    highlightGroup($("[name='email']"));
+
                 var isDegree = MAJOR_CHANGE_DATA.newMajor.indexOf("Cert") < 0;
 
                 // We need to also determine if the new major is a certificate or not
@@ -185,7 +195,7 @@
                     {
                         var $group = $controlGroups.eq(i);
                         if ($group.text().indexOf("TSI Passed?") >= 0)
-                            $group.css("background-color", "pink");
+                            highlightGroup($group);
                     }
                 }
                 else
@@ -193,14 +203,10 @@
                     // If it is a certificate, what level is it?
                     var certificateLevel = parseInt($.trim(MAJOR_CHANGE_DATA.newMajor).slice(-1), 10);
 
-                    if (certificateLevel === 1)
-                    {
-                        $("input[type='radio'][value='Certificate Level 1']").prop("checked", true);
-                    }
-                    else
-                    {
+                    if (certificateLevel === 2)
                         $("input[type='radio'][value='Certificate Level 2']").prop("checked", true);
-                    }
+                    else
+                        $("input[type='radio'][value='Certificate Level 1']").prop("checked", true);
 
                     // Since certificates do not require TSI, go ahead and tick "N/A"
                     $("input[type='radio'][name='TSI Passed?'][value='N/A']").prop("checked", true);
@@ -208,6 +214,7 @@
 
                 // Lastly, insert the password
                 $("[id='Password']").val(PASSWORD);
+                GM.deleteValue("major-change-data");
             }
         });
     }
@@ -221,11 +228,13 @@
 
     function moveToNotesTab()
     {
-        if (MOVE_TO_NOTES_TAB_ENABLED)
-        {
-            $("#notes-tab").find("a")[0].click();
-            $("#advising-notes-compose-box").attr("placeholder", "PASTE RESULTS HERE.");
-        }
+        $("#notes-tab").find("a")[0].click();
+        $("#advising-notes-compose-box").attr("placeholder", "PASTE RESULTS HERE.");
+    }
+
+    function highlightGroup($group)
+    {
+        $group.css("background-color", "pink");
     }
 
     /* Clones the given button */
