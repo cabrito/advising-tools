@@ -13,13 +13,14 @@
 // @grant               GM.deleteValue
 // ==/UserScript==
 
-// You need to change the name and e-mail before using! For the MOVE_TO_NOTES_TAB, set as you like: (true = enabled, false = disabled)
+// Set as you like: (true = enabled, false = disabled)
 const MOVE_TO_NOTES_TAB_ENABLED = true;
 
-// In the event that the URL for the course sub form/Student Planner changes, you will need to update this with the correct URLs.
+// In the event that the URL for the transcript eval form/Student Planner changes, you will need to update this with the correct URLs.
 // MAKE SURE THE LINK GOES IN BETWEEN THE QUOTES!!!
-const URL_REPLACE_FORM            = "https://www.odessa.edu/current-students/records/transcripts/request-evaluation-of-another-colleges-transcript/index.html";
-const URL_FRAG_SP              = "/Student/Planning/Advisors/Advise/";
+const URL_REPLACE_FORM  = "https://www.odessa.edu/current-students/records/transcripts/request-evaluation-of-another-colleges-transcript/index.html";
+const URL_FRAG_SP       = "/Student/Planning/Advisors/Advise/";     // You just need a piece of the URL
+const URL_COLLEAGUE     = "https://chelsea.odessa.edu/UI/home/index.html";
 
 // *DON'T* TOUCH
 const URL_CURRENT = window.location.href;
@@ -112,8 +113,16 @@ class Student {
                     var student = new Student(studentId, major);
 
                     // Send the data over to Colleague
+                    var $colleagueAnchor = $("<a>", {
+                        href: URL_COLLEAGUE,
+                        target: "_blank",
+                        text: "(Click here to go to Colleague)",
+                        click: MOVE_TO_NOTES_TAB_ENABLED ? moveToNotesTab : null
+                    });
                     GM.setValue("trans-eval-bundle", JSON.stringify(student));
-                    insertTooltip("Data bundle sent to Colleague.", "#trans-eval-btn");
+                    insertTooltip("Data bundle sent to Colleague. " +
+                                    "Use NAE to access. ", "#trans-eval-btn")
+                                    .append($colleagueAnchor);
                 });
             }
         }
@@ -268,6 +277,7 @@ async function colleagueFix() {
                             window.open(URL_REPLACE_FORM, "_blank");
                             $(this).remove();
                         })
+                        .css({"background-color":"red"})
                         .insertAfter("#btnNavigate");
         }
     } else {
@@ -284,9 +294,14 @@ function insertTooltip(msg, selectorStr)
     if ($("#tooltip").length)   $("#tooltip").remove();
     const STYLE_TOOLTIP = {"font-weight":"bold",
                             "color":"DarkSlateBlue"};
-    $("<p>", {
+    return $("<p>", {
         id:  "tooltip"
     }).css(STYLE_TOOLTIP)
     .insertAfter(selectorStr)
     .text(msg);
+}
+
+function moveToNotesTab() {
+    $("#notes-tab").find("a")[0].click();
+    $("#advising-notes-compose-box").attr("placeholder", "PASTE RESULTS HERE.");
 }

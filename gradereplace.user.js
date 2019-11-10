@@ -13,7 +13,7 @@
 // @grant               GM.deleteValue
 // ==/UserScript==
 
-// You need to change the name and e-mail before using! For the MOVE_TO_NOTES_TAB, set as you like: (true = enabled, false = disabled)
+// Set as you like: (true = enabled, false = disabled)
 const MOVE_TO_NOTES_TAB_ENABLED = true;
 
 // In the event that the URL for the course sub form/Student Planner changes, you will need to update this with the correct URLs.
@@ -77,13 +77,13 @@ class Student {
         this.bundle = [];
     }
 }
-
-var student = {};
 /**
  *  The "main" function of the code.
  */
 (async function() {
     "use strict";
+
+    var student = {};
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                          //

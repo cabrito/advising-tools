@@ -17,8 +17,8 @@
     "use strict";   // Makes the code "safer" to prevent us from using undeclared variables.
 
     // You need to change this information before using!
-    const ADVISOR_NAME              = "CHANGE THIS IN THE SCRIPT";
-    const ADVISOR_EMAIL             = "CHANGE THIS IN THE SCRIPT@odessa.edu";
+    const ADVISOR_NAME              = "CHANGETHISINTHESCRIPT";
+    const ADVISOR_EMAIL             = "CHANGETHISINTHESCRIPT@odessa.edu";
     const PASSWORD                  = "SSEM";
     const MOVE_TO_NOTES_TAB_ENABLED = true;
 
@@ -171,9 +171,9 @@
                 $("[id='New Major Code']").val(MAJOR_CHANGE_DATA.newMajorCode);
 
                 // Warn the user that they forgot to edit their name and such in the script
-                if ($("[id='Advisor Name']").val() === "CHANGE THIS IN THE SCRIPT")
+                if ($("[id='Advisor Name']").val() === "CHANGETHISINTHESCRIPT")
                     highlightGroup($("[id='Advisor Name']"));
-                if ($("[name='email']").val() === "CHANGE THIS IN THE SCRIPT@odessa.edu")
+                if ($("[name='email']").val() === "CHANGETHISINTHESCRIPT@odessa.edu")
                     highlightGroup($("[name='email']"));
 
                 var isDegree = MAJOR_CHANGE_DATA.newMajor.indexOf("Cert") < 0;

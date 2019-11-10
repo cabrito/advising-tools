@@ -16,8 +16,8 @@
     "use strict";
 
     // You need to change the name and e-mail before using! For the MOVE_TO_NOTES_TAB, set as you like: (true = enabled, false = disabled)
-    const ADVISOR_NAME              = "CHANGE THIS IN THE SCRIPT";
-    const ADVISOR_EMAIL             = "CHANGE THIS IN THE SCRIPT@odessa.edu";
+    const ADVISOR_NAME              = "CHANGETHISINTHESCRIPT";
+    const ADVISOR_EMAIL             = "CHANGETHISINTHESCRIPT@odessa.edu";
     const MOVE_TO_NOTES_TAB_ENABLED = true;
 
     // In the event that the URL for the course sub form/Student Planner changes, you will need to update this with the correct URLs.
@@ -257,9 +257,9 @@
                 $("input[name='Name of Program']").val(COURSE_SUB_DATA.currentMajor);
 
                 // Warn the user that they forgot to edit their name and such in the script
-                if ($("input[name='Advisor/Faculty Name']").val() === "CHANGE THIS IN THE SCRIPT")
+                if ($("input[name='Advisor/Faculty Name']").val() === "CHANGETHISINTHESCRIPT")
                     highlightGroup($("input[name='Advisor/Faculty Name']"));
-                if ($("input[name='email']").val() === "CHANGE THIS IN THE SCRIPT@odessa.edu")
+                if ($("input[name='email']").val() === "CHANGETHISINTHESCRIPT@odessa.edu")
                     highlightGroup($("input[name='email']"));
 
                 var isDegree = COURSE_SUB_DATA.currentMajor.indexOf("Cert") < 0;
