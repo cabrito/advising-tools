@@ -3,7 +3,7 @@
 // @author              cabrito
 // @namespace           https://github.com/cabrito
 // @description         Automatically fills out the Transcript Evaluation Form
-// @version             1.0
+// @version             3.0
 // @include             https://*.edu*/Student/Planning/Advisors/Advise/*
 // @include             https://*.edu*/current-students/records/transcripts/request-evaluation-of-another-colleges-transcript/*
 // @include             https://*.edu*/UI/home/*
@@ -121,7 +121,7 @@ class Student {
                     });
                     GM.setValue("trans-eval-bundle", JSON.stringify(student));
                     insertTooltip("Data bundle sent to Colleague. " +
-                                    "Use NAE to access. ", "#trans-eval-btn")
+                                    "Use NAE to access. ", this)
                                     .append($colleagueAnchor);
                 });
             }
@@ -246,7 +246,7 @@ async function colleagueFix() {
         if ($("#popup-lookup").val().length === 0) {
             if (student.id > 0) {
                 $("#popup-lookup").val(student.id);
-                insertTooltip("Press Right Arrow, Space, then Enter.", "#modalMessageContainer");
+                insertTooltip("Press Right Arrow, Space, then Enter.", $("#modalMessageContainer"));
             }
         }
 
@@ -288,8 +288,9 @@ async function colleagueFix() {
 /**
  *  Inserts a tooltip after the selected element
  *  @param msg  The message to display to the user.
+ *  @return jQuery object for chaining
  */
-function insertTooltip(msg, selectorStr)
+function insertTooltip(msg, selector)
 {
     if ($("#tooltip").length)   $("#tooltip").remove();
     const STYLE_TOOLTIP = {"font-weight":"bold",
@@ -297,7 +298,7 @@ function insertTooltip(msg, selectorStr)
     return $("<p>", {
         id:  "tooltip"
     }).css(STYLE_TOOLTIP)
-    .insertAfter(selectorStr)
+    .insertAfter($(selector))
     .text(msg);
 }
 

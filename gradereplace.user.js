@@ -3,7 +3,7 @@
 // @author              cabrito
 // @namespace           https://github.com/cabrito
 // @description         Automatically fills out the Grade Replacement Form
-// @version             1.0
+// @version             3.0
 // @include             https://*.edu*/Student/Planning/Advisors/Advise/*
 // @include             https://*.edu*/current-students/records/forms/grade-replacement-gpa-update-request-for-repeat-coursework-online/*
 // @include             https://*.edu*/UI/home/*
@@ -218,20 +218,4 @@ function highlightGroup($group) {
 function moveToNotesTab() {
     $("#notes-tab").find("a")[0].click();
     $("#advising-notes-compose-box").attr("placeholder", "PASTE RESULTS HERE.");
-}
-
-/**
- *  Inserts a tooltip after the selected element
- *  @param msg  The message to display to the user.
- */
-function insertTooltip(msg, selectorStr)
-{
-    if ($("#tooltip").length)   $("#tooltip").remove();
-    const STYLE_TOOLTIP = {"font-weight":"bold",
-                            "color":"DarkSlateBlue"};
-    $("<p>", {
-        id:  "tooltip"
-    }).css(STYLE_TOOLTIP)
-    .insertAfter(selectorStr)
-    .text(msg);
 }
