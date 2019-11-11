@@ -29,8 +29,7 @@ const URL_CURRENT = window.location.href;
 var MutationObserver    = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 var observer            = new MutationObserver(mutationHandler);
 var obsConfig           = {childList: true,
-                            subtree: true,
-                            attributes: true};
+                            subtree: true};
 
 function mutationHandler() {
     spFix();
