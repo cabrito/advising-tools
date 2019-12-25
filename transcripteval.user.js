@@ -168,9 +168,9 @@ class Student {
         // We need to also determine if the new major is a certificate or not
         if (isDegree)
         {
-            if(student.major.includes("AAS")) {
+            if(student.major.toUpperCase().includes("AAS")) {
                 $("input[type='radio'][value='Associate of Applied Science']").prop("checked", true);
-            } else if (student.major.includes("AS")) {
+            } else if (student.major.toUpperCase().includes("AS")) {
                 $("input[type='radio'][value='Associate of Science']").prop("checked", true);
             } else {
                 $("input[type='radio'][value='Associate of Arts']").prop("checked", true);
@@ -221,7 +221,7 @@ function isValidMajor(text)
                             "(UG)",
                             "UG",
                             "Educational Goal"];    // Nasty hack due to some students having no educational goal declared.
-    return nonmajorList.indexOf(text) < 0;
+    return !nonmajorList.includes(text);
 }
 
 function highlightGroup($group) {
@@ -259,7 +259,7 @@ async function colleagueFix() {
                                 student.last    = $("#LAST-NAME").val();
                                 student.middle  = $("#MIDDLE-NAME").val();
                                 student.email   = $("#PERSON-EMAIL-ADDRESSES_1").val();
-                                student.tel     = $("#VAR-PHONES_1").val();
+                                student.tel     = $("#VAR-PHONES_1").val().replace(/-/g, "");
                                 student.ssn     = $("#SSN").val().substring($("#SSN").val().lastIndexOf("-") + 1);
                                 student.dob     = $("#BIRTH-DATE").val();
 
