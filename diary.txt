@@ -1,0 +1,20 @@
+26 March, 2020
+    Going to try localStorage (https://stackoverflow.com/questions/2010892/storing-objects-in-html5-localstorage)
+    ...and it works!
+
+    Had to change some stuff around... User must now include the full URLs.
+    Need to include logic that forces the user to set their preferences in EACH
+    script.
+
+24 March, 2020
+    I have finished the user config script. Unfortunately, what I forgot about is that GM.getValue and GM.setValue
+    can only share data between instances of the SAME script. So unfortunately, the design of the scripts disallows
+    for a simple plug-and-play solution.
+
+    A few options:
+        1) Since the preferences menu only matters on Student Planning, I can set a cookie that each of the scripts
+           could read. This is the simplest option as the modularity is preserved, and blind changes to Colleague
+           won't be necessary.
+        2) To make things easier for the advisor, I could have just one, VERY large script. However, this choice
+           ruins the modularity and since I don't have access to Colleague, I would have to be very careful with
+           any changes I make; any changes would basically be blind.

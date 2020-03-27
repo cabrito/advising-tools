@@ -14,12 +14,12 @@
 
 // You need to change the name and e-mail before using! For the MOVE_TO_NOTES_TAB, set as you like: (true = enabled, false = disabled)
 const ADVISOR_NAME              = "CHANGETHISINTHESCRIPT";
-const ADVISOR_EMAIL             = "CHANGETHISINTHESCRIPT@odessa.edu";
+const ADVISOR_EMAIL             = "CHANGETHISINTHESCRIPT@COLLEGE.edu";
 const MOVE_TO_NOTES_TAB_ENABLED = true;
 
 // In the event that the URL for the course sub form/Student Planner changes, you will need to update this with the correct URLs.
 // MAKE SURE THE LINK GOES IN BETWEEN THE QUOTES!!!
-const URL_COURSE_SUB            = "https://www.odessa.edu/current-students/records/faculty/AdvisorRequestCourseSub/index.html";
+const URL_COURSE_SUB            = "PUT-THE-LINK-TO-THE-COURSE-SUB-FORM-HERE-IN-BETWEEN-THESE-QUOTES";
 const URL_SPFRAG                = "/Student/Planning/Advisors/Advise/";
 
 // *DON'T* TOUCH
@@ -258,7 +258,7 @@ async function courseSubber()
     // Warn the user that they forgot to edit their name and such in the script
     if ($("input[name='Advisor/Faculty Name']").val() === "CHANGETHISINTHESCRIPT")
         highlightGroup($("input[name='Advisor/Faculty Name']"));
-    if ($("input[name='email']").val() === "CHANGETHISINTHESCRIPT@odessa.edu")
+    if ($("input[name='email']").val() === "CHANGETHISINTHESCRIPT@COLLEGE.edu")
         highlightGroup($("input[name='email']"));
 
     var isDegree = !COURSE_SUB_DATA.currentMajor.includes("Cert");

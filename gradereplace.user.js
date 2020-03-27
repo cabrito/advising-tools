@@ -18,7 +18,7 @@ const MOVE_TO_NOTES_TAB_ENABLED = true;
 
 // In the event that the URL for the course sub form/Student Planner changes, you will need to update this with the correct URLs.
 // MAKE SURE THE LINK GOES IN BETWEEN THE QUOTES!!!
-const URL_REPLACE_FORM          = "https://www.odessa.edu/current-students/records/forms/grade-replacement-gpa-update-request-for-repeat-coursework-online/index.html";
+const URL_REPLACE_FORM          = "PUT-THE-LINK-TO-THE-GPA-UPDATE-FORM-HERE-IN-BETWEEN-THESE-QUOTES";
 const URL_FRAG_SP               = "/Student/Planning/Advisors/Advise/";
 
 // *DON'T* TOUCH

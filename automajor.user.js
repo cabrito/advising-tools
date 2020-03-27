@@ -14,13 +14,13 @@
 
 // You need to change this information before using!
 const ADVISOR_NAME              = "CHANGETHISINTHESCRIPT";
-const ADVISOR_EMAIL             = "CHANGETHISINTHESCRIPT@odessa.edu";
+const ADVISOR_EMAIL             = "CHANGETHISINTHESCRIPT@COLLEGE.edu";
 const PASSWORD                  = "SSEM";
 const MOVE_TO_NOTES_TAB_ENABLED = true;
 
 // In the event that the URL for the major change form/Student Planner changes, you will need to update this with the correct URLs.
 // MAKE SURE THE LINK GOES IN BETWEEN THE QUOTES!!!
-const URL_MAJOR_CHANGE_FORM     = "https://www.odessa.edu/current-students/records/faculty/advisor-major-change-request/index.html";
+const URL_MAJOR_CHANGE_FORM     = "PUT-THE-LINK-TO-THE-MAJOR-CHANGE-FORM-HERE-IN-BETWEEN-THESE-QUOTES";
 const URL_SPFRAG                = "/Student/Planning/Advisors/Advise/";
 
 // *DON'T* TOUCH
@@ -169,7 +169,7 @@ async function majorChanger()
     // Warn the user that they forgot to edit their name and such in the script
     if ($("[id='Advisor Name']").val() === "CHANGETHISINTHESCRIPT")
         highlightGroup($("[id='Advisor Name']"));
-    if ($("[name='email']").val() === "CHANGETHISINTHESCRIPT@odessa.edu")
+    if ($("[name='email']").val() === "CHANGETHISINTHESCRIPT@COLLEGE.edu")
         highlightGroup($("[name='email']"));
 
     var isDegree = !MAJOR_CHANGE_DATA.newMajor.includes("Cert");

@@ -15,7 +15,7 @@
 // Helpful switches that can be enabled and disabled as-needed.
 const STILL_ON_EIGHT_WEEKS_SYSTEM   = true;
 const FIX_TYPOS_ENABLED             = true;
-const URL_COLLEAGUE                 = "https://chelsea.odessa.edu/UI/home/index.html";
+const URL_COLLEAGUE                 = "PUT-THE-LINK-TO-COLLEAGUE-HERE-IN-BETWEEN-THESE-QUOTES";
 const URL_SPFRAG                    = "/Student/Planning/Advisors/Advise/";     // Fragment of URL used in Student Planner
 const PRETEXT_BREAKER               = "Class Key  | Course | Number | Section |   Time & Day   | Instructor";
 const POSTTEXT_BREAKER              = "----------------------";

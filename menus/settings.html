@@ -1,0 +1,162 @@
+<!--
+    AAK Settings Menu
+
+    USAGE INSTRUCTIONS:
+    Select everything INSIDE the <body> tags, put it into its own file called
+    `menu.dat` and run the following command in the Linux terminal:
+
+        sed 's/^/\"/; s/$/ \" \\ /' menu.dat > menu.js
+
+    This will dress the HTML code to be usable inside of JavaScript.
+-->
+
+<html>
+    <head>
+        <style>
+            #aak {
+                position: absolute;
+                /*left: -425px;*/
+                transition: 0.5s;
+                padding: 15px;
+                width: 30rem;
+                font-family: sans-serif;
+                text-decoration: none;
+                border-radius: 0 5px 5px 0;
+                /*background-color: powderblue;*/
+            }
+            #table-colors {
+                width=100%;
+            }
+            /*
+            #aak:hover {
+                left: 0;
+            }*/
+        </style>
+    </head>
+    <body>
+        <div id='aak'>
+            <div class='toggle'>
+                <h1>
+                    Preferences
+                </h1>
+            </div>
+            <div class='popout-menu'>
+                <form>
+                    <!-- Personal information the user can set-->
+                    <div>
+                        <input id='button-reset' type='button' class='eds-button eds-button--secondary' value='Something broken? Click to Reset Preferences'>
+                    </div>
+                    <br>
+                    <section>
+                        <h2>Personal</h2>
+                        <div>
+                            <label for='username'>Name: </label>
+                            <input id='username' type='text' name='username' placeholder='John Doe'>
+                        </div>
+                        <div>
+                            <label for='email'>Email: </label>
+                            <input id='email' type='text' name='email' placeholder='jdoe@school.edu'>
+                        </div>
+                        <div>
+                            <label for='advpassword'>Advising Password: </label>
+                            <input id='advpassword' type='password' name='advpassword' size='33' placeholder='DO NOT PUT YOUR PERSONAL PASSWORD'>
+                        </div>
+                        <br>
+                        <div>
+                            <label for='option-notes-tab'>Move to Notes Tab Automatically? </label>
+                            <select id='option-notes-tab'>
+                                <option value='1'>Yes</option>
+                                <option value='0'>No</option>
+                            </select>
+                        </div>
+                    </section>
+
+                    <!-- Options to set the colors for Student Planning -->
+                    <section>
+                        <h2>Schedule Colors</h2>
+                        <!-- Primary Term -->
+                        <div>
+                            <table id='table-colors' align='center'>
+                                <thead align='center'>
+                                    <td></td>
+                                    <td>First</td>
+                                    <td>Second</td>
+                                    <td>Full</td>
+                                    <td>Banned</td>
+                                </thead>
+                                <tbody align='center'>
+                                    <tr>
+                                        <td>Term Color</td>
+                                        <td><input id='color-primary' type='color' name='color-primary' style='height:3rem' value='#ffdab9'></td>
+                                        <td><input id='color-secondary' type='color' name='color-secondary' style='height:3rem' value='#b0e0e6'></td>
+                                        <td><input id='color-full' type='color' name='color-full' style='height:3rem' value='#ffffff'></td>
+                                        <td><input id='color-banned' type='color' name='color-banned' style='height:3rem' value='#ff0000'></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Text Color</td>
+                                        <td><input id='color-primary-text' type='color' style='height:3rem' name='color-primary-text'></td>
+                                        <td><input id='color-secondary-text' type='color' style='height:3rem' name='color-secondary-text'></td>
+                                        <td><input id='color-full-text' type='color' style='height:3rem' name='color-full-text'></td>
+                                        <td><input id='color-banned-text' type='color' style='height:3rem' name='color-banned-text' value='#ffffff'></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <br>
+                        <div>
+                            <label for='option-colors'>Use colors on schedule? </label>
+                            <select id='option-colors'>
+                                <option value='1'>Yes</option>
+                                <option value='0'>No</option>
+                            </select>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2>Advanced: URL Configuration</h2>
+                        <p>
+                            <em>Even if you aren't using a particular script, you will still need
+                                to set these. Note that if these are modified, you will need to
+                                change these at the top of each script as well.</em>
+                        </p>
+                        <p>
+                            <em>You MUST put the full URL here.</em>
+                        </p>
+                        <br>
+                        <div>
+                            <label for='url-colleague'>URL for Colleague: </label>
+                            <input id='url-colleague' type='text' name='url-colleague' size='50'>
+                        </div>
+                        <div>
+                            <label for='url-coursesub'>Course Substitution Form: </label>
+                            <input id='url-coursesub' type='text' name='url-coursesub' size='50'>
+                        </div>
+                        <div>
+                            <label for='url-gradereplace'>Grade Replacement Form: </label>
+                            <input id='url-gradereplace' type='text' name='url-gradereplace' size='50'>
+                        </div>
+                        <div>
+                            <label for='url-majorchange'>Major Change Form: </label>
+                            <input id='url-majorchange' type='text' name='url-majorchange' size='50'>
+                        </div>
+                        <div>
+                            <label for='url-transcripteval'>Transcript Evaluation Form: </label>
+                            <input id='url-transcripteval' type='text' name='url-transcripteval' size='50'>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Advanced: Term Filtering</h2>
+                        <p>
+                            The following list determines the section extensions to use when
+                            shading classes from search results/highlighting red on the schedule.
+                        </p>
+                        <p>
+                            Ensure that each extension is separated by a comma. Consult the Records office for a list of what each extension corresponds to.
+                        </p>
+                        <textarea id='filter-banned' name='name' rows='4' cols='80'>A,AC,AL,B,CH,CR,CT,D,E,EC,HS,I,J,K,L,M,MM,NT,P,R,RM,Q,RK,S,T,V,W</textarea>
+                    </section>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

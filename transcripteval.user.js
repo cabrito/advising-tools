@@ -18,7 +18,7 @@ const MOVE_TO_NOTES_TAB_ENABLED = true;
 
 // In the event that the URL for the transcript eval form/Student Planner changes, you will need to update this with the correct URLs.
 // MAKE SURE THE LINK GOES IN BETWEEN THE QUOTES!!!
-const URL_REPLACE_FORM  = "https://www.odessa.edu/current-students/records/transcripts/request-evaluation-of-another-colleges-transcript/index.html";
+const URL_REPLACE_FORM  = "PUT-THE-LINK-TO-THE-TRANSCRIPT-EVALUATION-FORM-HERE-IN-BETWEEN-THESE-QUOTES";
 const URL_FRAG_SP       = "/Student/Planning/Advisors/Advise/";     // You just need a piece of the URL
 const URL_COLLEAGUE     = "https://chelsea.odessa.edu/UI/home/index.html";
 
