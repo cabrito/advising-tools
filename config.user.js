@@ -9,7 +9,7 @@
 // ==/UserScript==
 
 (function() {
-    'use strict';
+    "use strict";
 
     // Set up the webpage
     generateForm();
@@ -152,7 +152,7 @@ function generatePreferences()
         username:   $.trim($("#username").val()),
         email:      $.trim($("#email").val()),
         advPass:    $("#advpassword").val(),
-        autoNotes:  $("#option-notes-tab").val()
+        autoNotes:  parseInt($("#option-notes-tab").val(), 10)
     };
     let colors = {
         primary:        $("#color-primary").val(),
@@ -163,7 +163,7 @@ function generatePreferences()
         fullText:       $("#color-full-text").val(),
         banned:         $("#color-banned").val(),
         bannedText:     $("#color-banned-text").val(),
-        useColors:      $("#option-colors").val()
+        useColors:      parseInt($("#option-colors").val(), 10)
     };
     let urls = {
         colleague:      $.trim($("#url-colleague").val()),

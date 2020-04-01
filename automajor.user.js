@@ -4,23 +4,25 @@
 // @namespace           https://github.com/cabrito
 // @description         Automatically fills out the Change Major form
 // @version             3.0
-// @include             https://*.edu*/Student/Planning/Advisors/Advise/*
+// @include             https://*.edu/Student/Planning/Advisors/Advise/*
 // @include             https://*.edu/*advisor-major-change-request/*
-// @require             https://code.jquery.com/jquery-3.4.1.min.js
+// @require             https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js
 // @grant               GM.getValue
 // @grant               GM.setValue
 // @grant               GM.deleteValue
 // ==/UserScript==
 
 // You need to change this information before using!
-const ADVISOR_NAME              = "CHANGETHISINTHESCRIPT";
-const ADVISOR_EMAIL             = "CHANGETHISINTHESCRIPT@COLLEGE.edu";
-const PASSWORD                  = "SSEM";
-const MOVE_TO_NOTES_TAB_ENABLED = true;
+const PREFERENCES               = getPreferences();
+/*
+const ADVISOR_NAME              = PREFERENCES.personal.username || "CHANGETHISINTHESCRIPT";
+const ADVISOR_EMAIL             = PREFERENCES.personal.email    || "CHANGETHISINTHESCRIPT@COLLEGE.edu";
+const PASSWORD                  = PREFERENCES.personal.advPass  || " ";
+const MOVE_TO_NOTES_TAB_ENABLED = PREFERENCES.personal.autoNotes|| false;
 
 // In the event that the URL for the major change form/Student Planner changes, you will need to update this with the correct URLs.
 // MAKE SURE THE LINK GOES IN BETWEEN THE QUOTES!!!
-const URL_MAJOR_CHANGE_FORM     = "PUT-THE-LINK-TO-THE-MAJOR-CHANGE-FORM-HERE-IN-BETWEEN-THESE-QUOTES";
+const URL_MAJOR_CHANGE_FORM     = "PUT-THE-LINK-TO-THE-MAJOR-CHANGE-FORM-HERE-IN-BETWEEN-THESE-QUOTES";*/
 const URL_SPFRAG                = "/Student/Planning/Advisors/Advise/";
 
 // *DON'T* TOUCH
@@ -41,11 +43,15 @@ function mutationHandler() {
     "use strict";   // Makes the code "safer" to prevent us from using undeclared variables.
 
     // If we're on Student Planner...
-    if (URL_CURRENT.includes(URL_SPFRAG))
+    if (URL_CURRENT.includes(URL_SPFRAG)) {
+        if ($.isEmptyObject(PREFERENCES)) {
+            insertTooltip("WARNING! Advisor preferences not set!", $("#user-profile-right"));
+        }
         observer.observe(document, obsConfig);
+    }
+
     // Otherwise, do stuff when we're on the Major Change request page.
-    else if (URL_CURRENT.includes(URL_MAJOR_CHANGE_FORM))
-        majorChanger();
+    else majorChanger();
 }());
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,11 +85,15 @@ function spFix()
 
             // Reprograms the "Change to this Major button" to take us to the major-change request form.
             $changeMajorBtn.on("click", function () {
+                if (!PREFERENCES.urls.majorChange) {
+                    alert("WARNING! URL for major change form not set in preferences!");
+                    return;
+                }
                 GM.setValue("major-change-data", JSON.stringify(generateData()));
-                window.open(URL_MAJOR_CHANGE_FORM, "_blank");
+                window.open(PREFERENCES.urls.majorChange, "_blank");
 
                 // As a convenience, we swap to the Notes tab, because that's where we're likely to need to go next.
-                if (MOVE_TO_NOTES_TAB_ENABLED)  moveToNotesTab();
+                if (PREFERENCES.personal.autoNotes)  moveToNotesTab();
             });
 
             // Then, press the Change Major button onto the page.
@@ -101,14 +111,17 @@ function generateData()
     var studentId = studentIdText.substring(studentIdText.lastIndexOf(" ") + 1);
     var currentMajor = getCurrentMajor();
     var newMajor = $.trim($("#current-program-text").text());
+    var newMajorAdj = newMajor.substring(0, newMajor.lastIndexOf("("));
+    var newMajorCode = newMajor.substring(newMajor.lastIndexOf("(") + 1, newMajor.lastIndexOf(")"));
 
     // All information needed to change the student's major
     return {
-        "studentName"  : studentName,
-        "studentId"    : studentId,
-        "currentMajor" : currentMajor,
-        "newMajor"     : newMajor.substring(0, newMajor.lastIndexOf("(")),
-        "newMajorCode": newMajor.substring(newMajor.lastIndexOf("(") + 1, newMajor.lastIndexOf(")"))
+        studentName  : studentName,
+        studentId    : studentId,
+        currentMajor : currentMajor,
+        newMajor     : newMajorAdj.length > 0 ? newMajorAdj : newMajor,
+        newMajorCode : newMajorCode.length > 0 ? newMajorCode : "N/A",
+        preferences  : PREFERENCES
     };
 }
 
@@ -142,6 +155,30 @@ function isValidMajor(text)
     return !nonmajorList.includes(text);
 }
 
+function getPreferences()
+{
+    let prefs = localStorage.getItem("preferences");
+    return JSON.parse(prefs) || {};
+    // return JSON.parse(await GM.getValue("preferences", "{}"));
+}
+
+/**
+ *  Inserts a tooltip after the selected element
+ *  @param msg  The message to display to the user.
+ *  @return jQuery object for chaining
+ */
+function insertTooltip(msg, selector)
+{
+    if ($("#tooltip").length)   $("#tooltip").remove();
+    const STYLE_TOOLTIP = {"font-weight":"bold",
+                            "color":"#ff0000"};
+    return $("<p>", {
+        id:  "tooltip"
+    }).css(STYLE_TOOLTIP)
+    .insertAfter($(selector))
+    .text(msg);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                          //
 //                              Major-Change Form Functions                                 //
@@ -157,9 +194,11 @@ async function majorChanger()
 
     if ($.isEmptyObject(MAJOR_CHANGE_DATA)) return;
 
+    console.log(JSON.stringify(MAJOR_CHANGE_DATA));
+
     // Now, fill out the form
-    $("[id='Advisor Name']").val(ADVISOR_NAME);
-    $("[name='email']").val(ADVISOR_EMAIL);
+    $("[id='Advisor Name']").val(MAJOR_CHANGE_DATA.preferences.personal.username);
+    $("[name='email']").val(MAJOR_CHANGE_DATA.preferences.personal.email);
     $("[id='Student Name']").val(MAJOR_CHANGE_DATA.studentName);
     $("[id='OC ID #']").val(MAJOR_CHANGE_DATA.studentId);
     $("[name='Current Major']").val(MAJOR_CHANGE_DATA.currentMajor);
@@ -167,9 +206,9 @@ async function majorChanger()
     $("[id='New Major Code']").val(MAJOR_CHANGE_DATA.newMajorCode);
 
     // Warn the user that they forgot to edit their name and such in the script
-    if ($("[id='Advisor Name']").val() === "CHANGETHISINTHESCRIPT")
+    if ($("[id='Advisor Name']").val().length === 0)
         highlightGroup($("[id='Advisor Name']"));
-    if ($("[name='email']").val() === "CHANGETHISINTHESCRIPT@COLLEGE.edu")
+    if ($("[name='email']").val().length === 0)
         highlightGroup($("[name='email']"));
 
     var isDegree = !MAJOR_CHANGE_DATA.newMajor.includes("Cert");
@@ -209,7 +248,7 @@ async function majorChanger()
     }
 
     // Lastly, insert the password
-    $("[id='Password']").val(PASSWORD);
+    $("[id='Password']").val(MAJOR_CHANGE_DATA.preferences.personal.advPass);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
