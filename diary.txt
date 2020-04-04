@@ -1,3 +1,14 @@
+4 April, 2020
+    Aha! I can just use @exclude to patch security problems related to things like hardvard.edubadwebsite.com!
+    Then just let the user specify the data in the user configuration page.
+
+1 April, 2020
+    I'm going to try a one-and-done approach to the URL system. Since Tampermonkey/Greasemonkey permit the user
+    to set the includes via their GUI, I think that method is preferred, as it removes one avenue for security holes.
+
+    I'm going to use GM.info.script.includes to grab the URLs. Put in an error if they are not a certain size,
+    and search for the URLs that don't have the Student Planner fragment.
+
 26 March, 2020
     Going to try localStorage (https://stackoverflow.com/questions/2010892/storing-objects-in-html5-localstorage)
     ...and it works!

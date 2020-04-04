@@ -6,26 +6,17 @@
 // @version             3.0
 // @include             https://*.edu/Student/Planning/Advisors/Advise/*
 // @include             https://*.edu/*advisor-major-change-request/*
+// @exclude             https://*edu*.tld
 // @require             https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js
+// @grant               GM.info
 // @grant               GM.getValue
 // @grant               GM.setValue
 // @grant               GM.deleteValue
 // ==/UserScript==
 
-// You need to change this information before using!
-const PREFERENCES               = getPreferences();
-/*
-const ADVISOR_NAME              = PREFERENCES.personal.username || "CHANGETHISINTHESCRIPT";
-const ADVISOR_EMAIL             = PREFERENCES.personal.email    || "CHANGETHISINTHESCRIPT@COLLEGE.edu";
-const PASSWORD                  = PREFERENCES.personal.advPass  || " ";
-const MOVE_TO_NOTES_TAB_ENABLED = PREFERENCES.personal.autoNotes|| false;
-
-// In the event that the URL for the major change form/Student Planner changes, you will need to update this with the correct URLs.
-// MAKE SURE THE LINK GOES IN BETWEEN THE QUOTES!!!
-const URL_MAJOR_CHANGE_FORM     = "PUT-THE-LINK-TO-THE-MAJOR-CHANGE-FORM-HERE-IN-BETWEEN-THESE-QUOTES";*/
-const URL_SPFRAG                = "/Student/Planning/Advisors/Advise/";
-
-// *DON'T* TOUCH
+// *DON'T* TOUCH unless you know what you're doing!
+const PREFERENCES = getPreferences();
+const URL_SPFRAG  = "/Student/Planning/Advisors/Advise/";
 const URL_CURRENT = window.location.href;
 
 // Information regarding the MutationObserver
@@ -45,7 +36,8 @@ function mutationHandler() {
     // If we're on Student Planner...
     if (URL_CURRENT.includes(URL_SPFRAG)) {
         if ($.isEmptyObject(PREFERENCES)) {
-            insertTooltip("WARNING! Advisor preferences not set!", $("#user-profile-right"));
+            insertTooltip("WARNING! Advisor preferences not set! " +
+                GM.info.script.name + " script may not work!", $("#user-profile-right"));
         }
         observer.observe(document, obsConfig);
     }
@@ -56,7 +48,7 @@ function mutationHandler() {
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                          //
-//                              Student Planner Functions                                   //
+//                              Student Planning Functions                                   //
 //  All functions here should apply to Student Planner scraping (exclusively, if possible)  //
 //                                                                                          //
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,11 +62,9 @@ function spFix()
     var $progNotes = $("#get-evaluation-notices-link");
 
     // If we're on the "Progress" tab...
-    if ($whatIfBtn.length)
-    {
+    if ($whatIfBtn.length) {
         // Create the "Change to this Major" button if it doesn't already exist.
-        if ($("#change-major-button").length === 0)
-        {
+        if (!$("#change-major-button").length) {
             // If the sample course plan button exists, replace it
             var $sampleCoursePlanBtn = $("#load-sample-plan-button");
 
@@ -85,7 +75,11 @@ function spFix()
 
             // Reprograms the "Change to this Major button" to take us to the major-change request form.
             $changeMajorBtn.on("click", function () {
-                if (!PREFERENCES.urls.majorChange) {
+                if ($.isEmptyObject(PREFERENCES)) {
+                    alert("WARNING! Advisor preferences not set! Cannot continue.");
+                    return;
+                }
+                if (!PREFERENCES.urls.majorChange.length) {
                     alert("WARNING! URL for major change form not set in preferences!");
                     return;
                 }
@@ -131,8 +125,7 @@ function getCurrentMajor()
     var $programList = $(".esg-person-card__list-item");
 
     // Scroll through the list and find the first non-UG or non-CE major
-    for (var i = 1; i <= $programList.length - 1; i++)
-    {
+    for (var i = 1; i <= $programList.length - 1; i++) {
         var iProgramText = $.trim($programList.eq(i).text());
         if (isValidMajor(iProgramText))
                 return iProgramText;
@@ -169,11 +162,12 @@ function getPreferences()
  */
 function insertTooltip(msg, selector)
 {
-    if ($("#tooltip").length)   $("#tooltip").remove();
+    let unixTime = Date.now();
+    if ($("#tooltip-" + unixTime).length)   $("#tooltip-" + unixTime).remove();
     const STYLE_TOOLTIP = {"font-weight":"bold",
                             "color":"#ff0000"};
     return $("<p>", {
-        id:  "tooltip"
+        id:  "tooltip-" + unixTime
     }).css(STYLE_TOOLTIP)
     .insertAfter($(selector))
     .text(msg);
@@ -214,8 +208,7 @@ async function majorChanger()
     var isDegree = !MAJOR_CHANGE_DATA.newMajor.includes("Cert");
 
     // We need to also determine if the new major is a certificate or not
-    if (isDegree)
-    {
+    if (isDegree) {
         $("input[type='radio'][value='Degree']").prop("checked", true);
 
         // The ability to check the TSI status (or future equivalent)
@@ -226,15 +219,12 @@ async function majorChanger()
 
         // Find "TSI Passed?" section
         var $controlGroups = $("div[class='control-group']");
-        for (var i = 0; i < $controlGroups.length; i++)
-        {
+        for (var i = 0; i < $controlGroups.length; i++) {
             var $group = $controlGroups.eq(i);
             if ($group.text().includes("TSI Passed?"))
                 highlightGroup($group);
         }
-    }
-    else
-    {
+    } else {
         // If it is a certificate, what level is it?
         var certificateLevel = parseInt($.trim(MAJOR_CHANGE_DATA.newMajor).slice(-1), 10);
 

@@ -7,6 +7,7 @@
 // @include             https://*.edu*/Student/Planning/Advisors/Advise/*
 // @include             https://*.edu*/current-students/records/transcripts/request-evaluation-of-another-colleges-transcript/*
 // @include             https://*.edu*/UI/home/*
+// @exclude             https://*.edu*.tld
 // @require             https://code.jquery.com/jquery-3.4.1.min.js
 // @grant               GM.getValue
 // @grant               GM.setValue
