@@ -8,23 +8,26 @@
 // @include             https://*.edu*/current-students/records/transcripts/request-evaluation-of-another-colleges-transcript/*
 // @include             https://*.edu*/UI/home/*
 // @exclude             https://*.edu*.tld
-// @require             https://code.jquery.com/jquery-3.4.1.min.js
+// @require             https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js
+// @grant               GM.info
 // @grant               GM.getValue
 // @grant               GM.setValue
 // @grant               GM.deleteValue
 // ==/UserScript==
 
 // Set as you like: (true = enabled, false = disabled)
-const MOVE_TO_NOTES_TAB_ENABLED = true;
+//const MOVE_TO_NOTES_TAB_ENABLED = true;
 
 // In the event that the URL for the transcript eval form/Student Planner changes, you will need to update this with the correct URLs.
 // MAKE SURE THE LINK GOES IN BETWEEN THE QUOTES!!!
-const URL_REPLACE_FORM  = "PUT-THE-LINK-TO-THE-TRANSCRIPT-EVALUATION-FORM-HERE-IN-BETWEEN-THESE-QUOTES";
-const URL_FRAG_SP       = "/Student/Planning/Advisors/Advise/";     // You just need a piece of the URL
-const URL_COLLEAGUE     = "https://chelsea.odessa.edu/UI/home/index.html";
+//const URL_REPLACE_FORM  = "PUT-THE-LINK-TO-THE-TRANSCRIPT-EVALUATION-FORM-HERE-IN-BETWEEN-THESE-QUOTES";
+
+//const URL_COLLEAGUE     = "https://chelsea.odessa.edu/UI/home/index.html";
 
 // *DON'T* TOUCH
+const PREFERENCES = getPreferences();
 const URL_CURRENT = window.location.href;
+const URL_FRAG_SP = "/Student/Planning/Advisors/Advise/";     // You just need a piece of the URL
 
 // Information regarding the MutationObserver for Colleague
 var MutationObserver    = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
@@ -79,6 +82,13 @@ class Student {
     }
 }
 
+function getPreferences()
+{
+    let prefs = localStorage.getItem("preferences");
+    return JSON.parse(prefs) || {};
+    // return JSON.parse(await GM.getValue("preferences", "{}"));
+}
+
 /**
  *  The "main" function of the code.
  */
@@ -112,28 +122,34 @@ class Student {
                     var major = majorText.substring(0, majorText.lastIndexOf("(") - 1);
                     var student = new Student(studentId, major);
 
-                    // Send the data over to Colleague
-                    var $colleagueAnchor = $("<a>", {
-                        href: URL_COLLEAGUE,
-                        target: "_blank",
-                        text: "(Click here to go to Colleague)",
-                        click: MOVE_TO_NOTES_TAB_ENABLED ? moveToNotesTab : null
-                    });
+                    if (!$.isEmptyObject(PREFERENCES)) {
+                        if (PREFERENCES.urls.colleague.length) {
+                            // Send the data over to Colleague
+                            var $colleagueAnchor = $("<a>", {
+                                href: PREFERENCES.urls.colleague,
+                                target: "_blank",
+                                text: "(Click here to go to Colleague)",
+                                click: PREFERENCES.personal.autoNotes ? moveToNotesTab : null
+                            });
+                        }
+                    }
+
                     GM.setValue("trans-eval-bundle", JSON.stringify(student));
                     insertTooltip("Data bundle sent to Colleague. " +
                                     "Use NAE to access. ", this)
-                                    .append($colleagueAnchor);
+                                    .append(this);
                 });
             }
         }
     }
+
     //////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                          //
     //                              Transcript Eval Form Functions                              //
     //    All functions here should apply to the major change form (exclusively, if possible)   //
     //                                                                                          //
     //////////////////////////////////////////////////////////////////////////////////////////////
-    else if (URL_CURRENT.includes(URL_REPLACE_FORM)) {
+    else if (URL_CURRENT.includes(PREFERENCES.urls.transcriptEval)) {
         let student = JSON.parse(await GM.getValue("trans-eval-bundle", JSON.stringify(new Student(0,""))));
         GM.deleteValue("trans-eval-bundle");
 
@@ -274,7 +290,7 @@ async function colleagueFix() {
                             GM.setValue("trans-eval-bundle", JSON.stringify(student));
 
                             $("#btnFormCancelAll").click();
-                            window.open(URL_REPLACE_FORM, "_blank");
+                            window.open(PREFERENCES.urls.transcriptEval, "_blank");
                             $(this).remove();
                         })
                         .css({"background-color":"red"})

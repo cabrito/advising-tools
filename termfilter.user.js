@@ -4,19 +4,21 @@
 // @namespace           https://github.com/cabrito
 // @description         Aids the advisor to quickly distinguish between first and second long semester terms in Student Planner.
 // @version             3.0
-// @include             https://*.edu*/Student/Planning/Advisors/Advise/*
-// @require             https://code.jquery.com/jquery-3.4.1.min.js
+// @include             https://*.edu/Student/Planning/Advisors/Advise/*
+// @grant               GM.info
+// @require             https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js
 // ==/UserScript==
 
 // Helpful switches that can be turned on and off as needed (on = true, off = false)
-const BANNED_WARNING_ENABLED    = true;
-const COLOR_ALLOWED             = true;
+const PREFERENCES = getPreferences();
+const BANNED_WARNING_ENABLED = true;
+//const COLOR_ALLOWED             = true;
 
 // Color definitions used, provided that coloring is allowed
-const COLOR_BANNED_CLASS    = "red";
-const COLOR_BANNED_TEXT     = "white";
-const COLOR_FIRST_TERM      = "peachpuff";
-const COLOR_SECOND_TERM     = "powderblue";
+//const COLOR_BANNED_CLASS    = "red";
+//const COLOR_BANNED_TEXT     = "white";
+//const COLOR_FIRST_TERM      = "peachpuff";
+//const COLOR_SECOND_TERM     = "powderblue";
 
 // Here, you can define what you can type into the search box to filter for a specific term. '!' is preferred for speed.
 const FILTER_IDENTIFIER_FIRST   = ["@1", "!1"];
@@ -31,6 +33,10 @@ var obsConfig           = {childList: true,
 // For compatibility and security, we use an IIFE (Immediately invoked function expression)
 (function() {
     "use strict";   // Makes the code "safer" to prevent us from using undeclared variables.
+    if ($.isEmptyObject(PREFERENCES)) {
+        insertTooltip("WARNING! Advisor preferences not set! " +
+            GM.info.script.name + " script with colors may not work!", $("#user-profile-right"));
+    }
 
     /* Begin document observation */
     observer.observe(document, obsConfig);
@@ -39,7 +45,7 @@ var obsConfig           = {childList: true,
 function spFix()
 {
     // Color code the rows of the class schedule table
-    if (COLOR_ALLOWED)  colorTable();
+    if (PREFERENCES.colors.useColors)  colorTable();
 
     // Filter the search schedule
     if ($(".search-nestedaccordionitem").length) {
@@ -113,12 +119,18 @@ function colorTable()
 function colorRow(row)
 {
     const STYLE_ROW_SEPARATION  = "inset 0px 0px 5px rgba(0,0,0,0.5)";
-    const STYLE_TERM_FIRST      = {"background-color":  COLOR_FIRST_TERM,
+    const STYLE_TERM_FIRST      = {"background-color":  PREFERENCES.colors.primary,
+                                    "color":            PREFERENCES.colors.primaryText,
                                     "box-shadow":       STYLE_ROW_SEPARATION};
-    const STYLE_TERM_SECOND     = {"background-color":  COLOR_SECOND_TERM,
+    const STYLE_TERM_SECOND     = {"background-color":  PREFERENCES.colors.secondary,
+                                    "color":            PREFERENCES.colors.secondaryText,
                                     "box-shadow":       STYLE_ROW_SEPARATION};
-    const STYLE_BANNED_CLASS    = {"background-color":  COLOR_BANNED_CLASS,
-                                    "color":            COLOR_BANNED_TEXT,
+    const STYLE_TERM_FULL       = {"background-color":  PREFERENCES.colors.full,
+                                    "color":            PREFERENCES.colors.fullText,
+                                    "box-shadow":       STYLE_ROW_SEPARATION};
+    const STYLE_BANNED_CLASS    = {"background-color":  PREFERENCES.colors.banned,
+                                    "color":            PREFERENCES.colors.bannedText,
+                                    "box-shadow":       STYLE_ROW_SEPARATION
                                     "font-weight":      "bold"};
 
     var section = getSection(row);
@@ -135,29 +147,34 @@ function colorRow(row)
         // Is it during the 1st 8-weeks?
         if ((termId === 1) || (termId === 3))
             $(row).css(STYLE_TERM_FIRST);
-        else
+        else if ((termId === 2) || (termId === 4))
             $(row).css(STYLE_TERM_SECOND);
+        else
+            $(row).css(STYLE_TERM_FULL);
     } else {
         if (termId < 3)
             $(row).css(STYLE_TERM_FIRST);
         else if (termId < 5)
             $(row).css(STYLE_TERM_SECOND);
+        else
+            $(row).css(STYLE_TERM_FULL);
     }
 }
 
 function shadeBannedClasses()
 {
     const STYLE_BANNED_SEARCH           = {"filter":"brightness(0.5)"};
-    const STYLE_POTENTIALLY_BAD_SEARCH  = {"filter":"brightness(0.75) sepia(100%)"};
+    //const STYLE_POTENTIALLY_BAD_SEARCH  = {"filter":"brightness(0.75) sepia(100%)"};
     // Here so that the banned classes are indicated in the search results if the user didn't specify @1 or @2
     $(".search-nestedaccordionitem").each(function (i) {
         var classBox = $(".search-nestedaccordionitem").eq(i);
         var classTitle = $.trim($(classBox).find("a").text());
         var section = classTitle.substring(classTitle.lastIndexOf(" ") + 1);
 
-        if (isPotentiallyBadClass(section))
+        /*if (isPotentiallyBadClass(section))
             $(classBox).css(STYLE_POTENTIALLY_BAD_SEARCH);
-        else if (isBannedClass(section))
+        else */
+        if (isBannedClass(section))
             $(classBox).css(STYLE_BANNED_SEARCH);
     });
 }
@@ -217,25 +234,8 @@ function isBannedClass(section)
 
         if (isBannedExt(ext))
             return true;
-        else if (termId > 7)     // According to the section codes cheatsheet, 80 - 89 is OCTECHS, 90-99 is Dual Credit
+        else if (termId > 7)     // According to the section codes cheatsheet, 80 - 89 is HS, 90-99 is Dual Credit
             return true
-    }
-    else return false;
-}
-
-/**
- *	Custom-built solution that helps the advisor see that the section they're registering the student
- *	for is potentially bad.
- *	@param   section     The section text, e.g. H31C
- *	@return              Whether or not it is a potentially bad class, by section definition.
- */
-function isPotentiallyBadClass(section)
-{
-    var ext = getSectionExt(section);
-
-    if (BANNED_WARNING_ENABLED) {
-        if (isPotentiallyBadExt(ext))
-            return true;
     }
     else return false;
 }
@@ -250,6 +250,13 @@ function getSectionExt(section)
     return section.substring(SECTION_STRING_INDEX);
 }
 
+function getPreferences()
+{
+    let prefs = localStorage.getItem("preferences");
+    return JSON.parse(prefs) || {};
+    // return JSON.parse(await GM.getValue("preferences", "{}"));
+}
+
 /**
  *  Contained in the function are some course codes that are determined to be
  *  "off-limits" in terms of our registration process.
@@ -258,46 +265,7 @@ function getSectionExt(section)
  */
 function isBannedExt(ext)
 {
-    const BANNED_EXT_LIST   = [ "A",       // Andrews
-                                "AC",      // Alternative Completion
-                                "AL",      // Alpine
-                                "B",       // OHS
-                                "CH",      // City Hall
-                                "CR",      // Crane
-                                "CT",      // OCTECHS
-                                "D",       // Presidio
-                                "E",       // Pecos
-                                "EC",      // ECISD Training Center
-                                "HS",      // High school
-                                "I",       // Imperial
-                                "J",       // Ft. Davis
-                                "K",       // Kermit
-                                "L",       // Monahans
-                                "M",       // McCamey
-                                "MM",      // Marathon
-                                "NT",      // New Tech
-                                "P",       // Permian
-                                "R",       // Region 18
-                                "RM",      // Richard Milburn
-                                "Q",       // Balmorhea
-                                "RK",      // Rankin
-                                "S",       // Seminole
-                                "T",       // Terlingua
-                                "V",       // Valentine
-                                "W"];      // Wink
+    const BANNED_EXT_LIST = PREFERENCES.bannedExts;
 
     return BANNED_EXT_LIST.includes(ext);
-}
-
-/**
- *  Contained in the function are some course codes that are determined to be
- *  "potentially bad" in terms of our registration process.
- *  @param ext  The section extension, e.g., C, CT, P, etc.
- *  @return     Boolean value regarding if the class fits at least one of the banned locations.
- */
-function isPotentiallyBadExt(ext)
-{
-    const POTENTIALLY_BAD_LIST  = ["TT"];      // OC2UTPBt3
-
-    return POTENTIALLY_BAD_LIST.includes(ext);
 }

@@ -6,24 +6,26 @@
 // @version             3.0
 // @include             https://*.edu*/Student/Planning/Advisors/Advise/*
 // @include             https://*.edu*/current-students/records/faculty/AdvisorRequestCourseSub/*
-// @require             https://code.jquery.com/jquery-3.4.1.min.js
+// @exclude             https://*edu*.tld
+// @require             https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js
+// @grant               GM.info
 // @grant               GM.getValue
 // @grant               GM.setValue
 // @grant               GM.deleteValue
 // ==/UserScript==
 
 // You need to change the name and e-mail before using! For the MOVE_TO_NOTES_TAB, set as you like: (true = enabled, false = disabled)
-const ADVISOR_NAME              = "CHANGETHISINTHESCRIPT";
+// *DON'T* TOUCH
+const PREFERENCES = getPreferences();
+const URL_SPFRAG  = "/Student/Planning/Advisors/Advise/";
+const URL_CURRENT = window.location.href;
+/*const ADVISOR_NAME              = "CHANGETHISINTHESCRIPT";
 const ADVISOR_EMAIL             = "CHANGETHISINTHESCRIPT@COLLEGE.edu";
 const MOVE_TO_NOTES_TAB_ENABLED = true;
 
 // In the event that the URL for the course sub form/Student Planner changes, you will need to update this with the correct URLs.
 // MAKE SURE THE LINK GOES IN BETWEEN THE QUOTES!!!
-const URL_COURSE_SUB            = "PUT-THE-LINK-TO-THE-COURSE-SUB-FORM-HERE-IN-BETWEEN-THESE-QUOTES";
-const URL_SPFRAG                = "/Student/Planning/Advisors/Advise/";
-
-// *DON'T* TOUCH
-const URL_CURRENT = window.location.href;
+const URL_COURSE_SUB            = "PUT-THE-LINK-TO-THE-COURSE-SUB-FORM-HERE-IN-BETWEEN-THESE-QUOTES";*/
 
 // Information regarding the MutationObserver
 var MutationObserver    = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
@@ -39,10 +41,16 @@ function mutationHandler() {
     "use strict";
 
     // If we're on Student Planning...
-    if (URL_CURRENT.includes(URL_SPFRAG))
+    if (URL_CURRENT.includes(URL_SPFRAG)) {
+        if ($.isEmptyObject(PREFERENCES)) {
+            insertTooltip("WARNING! Advisor preferences not set! " +
+                GM.info.script.name + " script may not work!", $("#user-profile-right"));
+            return;
+        }
         observer.observe(document, obsConfig);
-    // Otherwise, do stuff when we're on the Major Change request page.
-    else if (URL_CURRENT.includes(URL_COURSE_SUB))
+    }
+    // Otherwise, do stuff when we're on the Course Substitution page.
+    else // if (URL_CURRENT.includes(PREFERENCES.urls.courseSub))
         courseSubber();
 }());
 
@@ -158,10 +166,11 @@ function generateData()
 
     // All information needed to change the student's major
     return {
-        "studentName"       : studentName,
-        "studentId"         : studentId,
-        "currentMajor"      : currentMajor,
-        "coursePairings"    : generatePairings()
+        preferences:      : PREFERENCES,
+        studentName       : studentName,
+        studentId         : studentId,
+        currentMajor      : currentMajor,
+        coursePairings    : generatePairings()
     };
 }
 
@@ -194,11 +203,19 @@ function generatePairings()
  */
 function initSub()
 {
+    if ($.isEmptyObject(PREFERENCES)) {
+        alert("WARNING! Advisor preferences not set! Cannot continue.");
+        return;
+    }
+    if (!PREFERENCES.urls.courseSub.length) {
+        alert("WARNING! URL for course substitution form not set in preferences!");
+        return;
+    }
     GM.setValue("course-sub-data", JSON.stringify(generateData()));
-    window.open(URL_COURSE_SUB, "_blank");
+    window.open(PREFERENCES.urls.courseSub, "_blank");
 
     // As a convenience, we swap to the Notes tab, because that's where we're likely to need to go next.
-    if (MOVE_TO_NOTES_TAB_ENABLED)  moveToNotesTab();
+    if (PREFERENCES.personal.autoNotes)  moveToNotesTab();
 }
 
 /**
@@ -231,6 +248,24 @@ function moveToNotesTab()
     $("#advising-notes-compose-box").attr("placeholder", "PASTE RESULTS HERE.");
 }
 
+/**
+ *  Inserts a tooltip after the selected element
+ *  @param msg  The message to display to the user.
+ *  @return jQuery object for chaining
+ */
+function insertTooltip(msg, selector)
+{
+    let unixTime = Date.now();
+    if ($("#tooltip-" + unixTime).length)   $("#tooltip-" + unixTime).remove();
+    const STYLE_TOOLTIP = {"font-weight":"bold",
+                            "color":"#ff0000"};
+    return $("<p>", {
+        id:  "tooltip-" + unixTime
+    }).css(STYLE_TOOLTIP)
+    .insertAfter($(selector))
+    .text(msg);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                          //
 //                                Course-Sub Form Functions                                 //
@@ -249,16 +284,16 @@ async function courseSubber()
     if ($.isEmptyObject(COURSE_SUB_DATA))   return;
 
     // Now, fill out the form
-    $("input[name='Advisor/Faculty Name']").val(ADVISOR_NAME);
-    $("input[name='email']").val(ADVISOR_EMAIL);
+    $("input[name='Advisor/Faculty Name']").val(COURSE_SUB_DATA.preferences.personal.username);
+    $("input[name='email']").val(COURSE_SUB_DATA.preferences.personal.email);
     $("input[name='Student Name']").val(COURSE_SUB_DATA.studentName);
     $("input[name='Student OC ID Number']").val(COURSE_SUB_DATA.studentId);
     $("input[name='Name of Program']").val(COURSE_SUB_DATA.currentMajor);
 
     // Warn the user that they forgot to edit their name and such in the script
-    if ($("input[name='Advisor/Faculty Name']").val() === "CHANGETHISINTHESCRIPT")
+    if ($("input[name='Advisor/Faculty Name']").val().length === 0)
         highlightGroup($("input[name='Advisor/Faculty Name']"));
-    if ($("input[name='email']").val() === "CHANGETHISINTHESCRIPT@COLLEGE.edu")
+    if ($("input[name='email']").val().length === 0)
         highlightGroup($("input[name='email']"));
 
     var isDegree = !COURSE_SUB_DATA.currentMajor.includes("Cert");

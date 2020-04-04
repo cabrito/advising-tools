@@ -6,17 +6,20 @@
 // @version             3.0
 // @include             https://*.edu*/UI/home/*
 // @include             https://*.edu*/Student/Planning/Advisors/Advise/*
-// @require             https://code.jquery.com/jquery-3.4.1.min.js
+// @exclude             https://*edu*.tld
+// @require             https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js
+// @grant               GM.info
 // @grant               GM.getValue
 // @grant               GM.setValue
 // @grant               GM.deleteValue
 // ==/UserScript==
 
 // Helpful switches that can be enabled and disabled as-needed.
+const PREFERENCES                   = getPreferences();
+const URL_SPFRAG                    = "/Student/Planning/Advisors/Advise/";     // Fragment of URL used in Student Planner
 const STILL_ON_EIGHT_WEEKS_SYSTEM   = true;
 const FIX_TYPOS_ENABLED             = true;
-const URL_COLLEAGUE                 = "PUT-THE-LINK-TO-COLLEAGUE-HERE-IN-BETWEEN-THESE-QUOTES";
-const URL_SPFRAG                    = "/Student/Planning/Advisors/Advise/";     // Fragment of URL used in Student Planner
+// const URL_COLLEAGUE                 = "PUT-THE-LINK-TO-COLLEAGUE-HERE-IN-BETWEEN-THESE-QUOTES";
 const PRETEXT_BREAKER               = "Class Key  | Course | Number | Section |   Time & Day   | Instructor";
 const POSTTEXT_BREAKER              = "----------------------";
 
@@ -39,6 +42,11 @@ const LOCATION = 6;
 async function mutationHandler () {
     // If we're on Student Planner...
     if (URL_CURRENT.includes(URL_SPFRAG)) {
+        if ($.isEmptyObject(PREFERENCES)) {
+            insertTooltip("WARNING! Advisor preferences not set! " +
+                GM.info.script.name + " script may not work!", $("#user-profile-right"));
+            return;
+        }
         spFix();
     }
     // Otherwise, we're in Colleague.
@@ -71,15 +79,19 @@ function spFix()
             adjustedBtn.on("click", function () {
                 try {
                     GM.setValue("currentSchedule", JSON.stringify(parseTable()));
-                    // Send the data over to Colleague
-                    var $colleagueAnchor = $("<a>", {
-                        href: URL_COLLEAGUE,
-                        target: "_blank",
-                        text: "(Click here to go to Colleague)"
-                    });
+                    if (!$.isEmptyObject(PREFERENCES)) {
+                        if (PREFERENCES.urls.colleague.length) {
+                            // Send the data over to Colleague
+                            var $colleagueAnchor = $("<a>", {
+                                href: PREFERENCES.urls.colleague,
+                                target: "_blank",
+                                text: "(Click here to go to Colleague)"
+                            });
+                        }
+                    }
                     insertTooltip("Data bundle sent to Colleague. " +
                                     "Use XRGCD or XADF to access. ", this)
-                                    .append($colleagueAnchor);
+                                    .append(this);
                 } catch (error) {
                     console.error(error);
                     alert("ERROR: Unable to read classes from table! (Did you plan everything to the section level?)");
@@ -206,6 +218,13 @@ function parseTerm() {
         // THIS SHOULD NEVER HAPPEN!!!
         default:            return "Error";
     }
+}
+
+function getPreferences()
+{
+    let prefs = localStorage.getItem("preferences");
+    return JSON.parse(prefs) || {};
+    // return JSON.parse(await GM.getValue("preferences", "{}"));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////

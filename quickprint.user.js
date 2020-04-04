@@ -5,7 +5,8 @@
 // @description         Removes the requirement of Colleague UI to go through Adobe Reader to print.
 // @version             3.0
 // @include             https://*.edu*/UI/home/*
-// @require             https://code.jquery.com/jquery-3.4.1.min.js
+// @exclude             https://*edu*.tld
+// @require             https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js
 // ==/UserScript==
 
 // Information regarding the MutationObserver

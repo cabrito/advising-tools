@@ -1,6 +1,6 @@
 4 April, 2020
     Aha! I can just use @exclude to patch security problems related to things like hardvard.edubadwebsite.com!
-    Then just let the user specify the data in the user configuration page.
+    Then just let the user specify the URLs in the user configuration page.
 
 1 April, 2020
     I'm going to try a one-and-done approach to the URL system. Since Tampermonkey/Greasemonkey permit the user

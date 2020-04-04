@@ -4,24 +4,25 @@
 // @namespace           https://github.com/cabrito
 // @description         Automatically fills out the Grade Replacement Form
 // @version             3.0
-// @include             https://*.edu*/Student/Planning/Advisors/Advise/*
-// @include             https://*.edu*/current-students/records/forms/grade-replacement-gpa-update-request-for-repeat-coursework-online/*
-// @include             https://*.edu*/UI/home/*
-// @require             https://code.jquery.com/jquery-3.4.1.min.js
+// @include             https://*.edu/Student/Planning/Advisors/Advise/*
+// @include             https://*.edu/current-students/records/forms/grade-replacement-gpa-update-request-for-repeat-coursework-online/*
+// @exclude             https://*edu*.tld
+// @require             https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js
+// @grant               GM.info
 // @grant               GM.getValue
 // @grant               GM.setValue
 // @grant               GM.deleteValue
 // ==/UserScript==
 
 // Set as you like: (true = enabled, false = disabled)
-const MOVE_TO_NOTES_TAB_ENABLED = true;
+//const MOVE_TO_NOTES_TAB_ENABLED = true;
 
 // In the event that the URL for the course sub form/Student Planner changes, you will need to update this with the correct URLs.
 // MAKE SURE THE LINK GOES IN BETWEEN THE QUOTES!!!
-const URL_REPLACE_FORM          = "PUT-THE-LINK-TO-THE-GPA-UPDATE-FORM-HERE-IN-BETWEEN-THESE-QUOTES";
-const URL_FRAG_SP               = "/Student/Planning/Advisors/Advise/";
-
+//const URL_REPLACE_FORM          = "PUT-THE-LINK-TO-THE-GPA-UPDATE-FORM-HERE-IN-BETWEEN-THESE-QUOTES";
 // *DON'T* TOUCH
+const PREFERENCES = getPreferences();
+const URL_FRAG_SP = "/Student/Planning/Advisors/Advise/";
 const URL_CURRENT = window.location.href;
 const COLORS_BUBBLE = ["wheat", "thistle", "lightsalmon", "pink", "lightgreen", "lightcyan"];
 
@@ -77,6 +78,14 @@ class Student {
         this.bundle = [];
     }
 }
+
+function getPreferences()
+{
+    let prefs = localStorage.getItem("preferences");
+    return JSON.parse(prefs) || {};
+    // return JSON.parse(await GM.getValue("preferences", "{}"));
+}
+
 /**
  *  The "main" function of the code.
  */
@@ -92,6 +101,10 @@ class Student {
     //                                                                                          //
     //////////////////////////////////////////////////////////////////////////////////////////////
     if (URL_CURRENT.includes(URL_FRAG_SP)) {
+        if ($.isEmptyObject(PREFERENCES)) {
+            insertTooltip("WARNING! Advisor preferences not set! " +
+                GM.info.script.name + " script may not work!", $("#user-profile-right"));
+        }
         var $addTermBtn = $("input[type='button'][value='Add a Term']").prop("id", "add-term-btn");
         var gradeReplaceBtn = new Button($addTermBtn, "grade-replace-btn", "Start Grade Replacement");
         gradeReplaceBtn.floatRight()
@@ -101,10 +114,18 @@ class Student {
                             gradeReplaceBtn.setText("Finish Linking")
                                             .get().off()
                                             .on("click", function () {
+                                                if ($.isEmptyObject(PREFERENCES)) {
+                                                    alert("WARNING! Advisor preferences not set! Cannot continue.");
+                                                    return;
+                                                }
+                                                if (!PREFERENCES.urls.gradeReplace.length) {
+                                                    alert("WARNING! URL for grade replace form not set in preferences!");
+                                                    return;
+                                                }
                                                 //$("#resetBtn").remove();
                                                 GM.setValue("grade-replace-bundle", JSON.stringify(student));
-                                                window.open(URL_REPLACE_FORM, "_blank");
-                                                if (MOVE_TO_NOTES_TAB_ENABLED)  moveToNotesTab();
+                                                window.open(PREFERENCES.urls.gradeReplace, "_blank");
+                                                if (PREFERENCES.personal.autoNotes)  moveToNotesTab();
                                             });
                             // Add reset Button
                             var resetBtn = new Button(gradeReplaceBtn.get(), "resetBtn", "Reset Linking");
@@ -123,7 +144,7 @@ class Student {
     //   All functions here should apply to the grade replace form (exclusively, if possible)   //
     //                                                                                          //
     //////////////////////////////////////////////////////////////////////////////////////////////
-    else if (URL_CURRENT.includes(URL_REPLACE_FORM)) {
+    else if (URL_CURRENT.includes(PREFERENCES.urls.gradeReplace)) {
         let student = JSON.parse(await GM.getValue("grade-replace-bundle", ""));
         GM.deleteValue("grade-replace-bundle");
         //console.log(JSON.stringify(student));
