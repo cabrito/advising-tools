@@ -75,17 +75,17 @@ function generateForm()
                 <tbody align='center'>
                     <tr>
                         <td>Term Color</td>
-                        <td><input id='color-primary' type='color' name='color-primary' style='height:3rem' value='#ffdab9'></td>
-                        <td><input id='color-secondary' type='color' name='color-secondary' style='height:3rem' value='#b0e0e6'></td>
-                        <td><input id='color-full' type='color' name='color-full' style='height:3rem' value='#ffffff'></td>
-                        <td><input id='color-banned' type='color' name='color-banned' style='height:3rem' value='#ff0000'></td>
+                        <td><input id='color-primary' type='color' name='color-primary' style='height:3rem;padding:0%' value='#ffdab9'></td>
+                        <td><input id='color-secondary' type='color' name='color-secondary' style='height:3rem;padding:0%' value='#b0e0e6'></td>
+                        <td><input id='color-full' type='color' name='color-full' style='height:3rem;padding:0%' value='#ffffff'></td>
+                        <td><input id='color-banned' type='color' name='color-banned' style='height:3rem;padding:0%' value='#ff0000'></td>
                     </tr>
                     <tr>
                         <td>Text Color</td>
-                        <td><input id='color-primary-text' type='color' style='height:3rem' name='color-primary-text'></td>
-                        <td><input id='color-secondary-text' type='color' style='height:3rem' name='color-secondary-text'></td>
-                        <td><input id='color-full-text' type='color' style='height:3rem' name='color-full-text'></td>
-                        <td><input id='color-banned-text' type='color' style='height:3rem' name='color-banned-text' value='#ffffff'></td>
+                        <td><input id='color-primary-text' type='color' style='height:3rem;padding:0%' name='color-primary-text'></td>
+                        <td><input id='color-secondary-text' type='color' style='height:3rem;padding:0%' name='color-secondary-text'></td>
+                        <td><input id='color-full-text' type='color' style='height:3rem;padding:0%' name='color-full-text'></td>
+                        <td><input id='color-banned-text' type='color' style='height:3rem;padding:0%' name='color-banned-text' value='#ffffff'></td>
                     </tr>
                 </tbody>
             </table>
@@ -127,10 +127,10 @@ function generateForm()
             <label for='url-majorchange'>Major Change Form: </label>
             <input id='url-majorchange' type='text' name='url-majorchange' size='50'>
         </div>
-        <div>
+        <!-- <div>
             <label for='url-transcripteval'>Transcript Evaluation Form: </label>
             <input id='url-transcripteval' type='text' name='url-transcripteval' size='50'>
-        </div>
+        </div> -->
     </section>
     <section>
         <h2>Advanced: Term Filtering</h2>
@@ -169,8 +169,8 @@ function generatePreferences()
         colleague:      $.trim($("#url-colleague").val()),
         courseSub:      $.trim($("#url-coursesub").val()),
         gradeReplace:   $.trim($("#url-gradereplace").val()),
-        majorChange:    $.trim($("#url-majorchange").val()),
-        transcriptEval: $.trim($("#url-transcripteval").val())
+        majorChange:    $.trim($("#url-majorchange").val())//,
+        //transcriptEval: $.trim($("#url-transcripteval").val())
     };
     let bannedExts = $("#filter-banned").val()
         .replace(/\s/g,'')
@@ -211,7 +211,7 @@ function fillForm(PREFERENCES)
     $("#url-coursesub").val(PREFERENCES.urls.courseSub);
     $("#url-gradereplace").val(PREFERENCES.urls.gradeReplace);
     $("#url-majorchange").val(PREFERENCES.urls.majorChange);
-    $("#url-transcripteval").val(PREFERENCES.urls.transcriptEval);
+    //$("#url-transcripteval").val(PREFERENCES.urls.transcriptEval);
 
     $("#filter-banned").val(processBannedArray(PREFERENCES.bannedExts));
 }

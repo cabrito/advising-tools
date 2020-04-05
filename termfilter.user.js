@@ -67,8 +67,12 @@ function filterClasses(termVal)
 {
     $(".search-nestedaccordionitem").each(function (i) {
         var classBox = $(".search-nestedaccordionitem").eq(i);
-        var classTitle = $.trim($(classBox).find("a").text());
-        var section = classTitle.substring(classTitle.lastIndexOf(" ") + 1);
+        //var classTitle = $.trim($(classBox).find("a").text());
+        //var section = classTitle.substring(classTitle.lastIndexOf(" ") + 1);
+
+        // There was an update to Student Planning, and it broke my shader :(
+        var classCode = $.trim($(classBox).find("a").text()).replace(/-/g,"_");
+        var section = classCode.substring(classCode.lastIndexOf("_") + 1);
 
         // Check the 2nd character.
         var termId = parseInt(section.charAt(1), 10);
@@ -130,7 +134,7 @@ function colorRow(row)
                                     "box-shadow":       STYLE_ROW_SEPARATION};
     const STYLE_BANNED_CLASS    = {"background-color":  PREFERENCES.colors.banned,
                                     "color":            PREFERENCES.colors.bannedText,
-                                    "box-shadow":       STYLE_ROW_SEPARATION
+                                    "box-shadow":       STYLE_ROW_SEPARATION,
                                     "font-weight":      "bold"};
 
     var section = getSection(row);
@@ -163,13 +167,17 @@ function colorRow(row)
 
 function shadeBannedClasses()
 {
-    const STYLE_BANNED_SEARCH           = {"filter":"brightness(0.5)"};
+    const STYLE_BANNED_SEARCH = {"filter":"brightness(0.5)"};
     //const STYLE_POTENTIALLY_BAD_SEARCH  = {"filter":"brightness(0.75) sepia(100%)"};
     // Here so that the banned classes are indicated in the search results if the user didn't specify @1 or @2
     $(".search-nestedaccordionitem").each(function (i) {
         var classBox = $(".search-nestedaccordionitem").eq(i);
-        var classTitle = $.trim($(classBox).find("a").text());
-        var section = classTitle.substring(classTitle.lastIndexOf(" ") + 1);
+        //var classTitle = $.trim($(classBox).find("a").text());
+        //var section = classTitle.substring(classTitle.lastIndexOf(" ") + 1);
+
+        // There was an update to Student Planning, and it broke my shader :(
+        var classCode = $.trim($(classBox).find("a").text()).replace(/-/g,"_");
+        var section = classCode.substring(classCode.lastIndexOf("_") + 1);
 
         /*if (isPotentiallyBadClass(section))
             $(classBox).css(STYLE_POTENTIALLY_BAD_SEARCH);
@@ -235,7 +243,7 @@ function isBannedClass(section)
         if (isBannedExt(ext))
             return true;
         else if (termId > 7)     // According to the section codes cheatsheet, 80 - 89 is HS, 90-99 is Dual Credit
-            return true
+            return true;
     }
     else return false;
 }
@@ -265,7 +273,7 @@ function getPreferences()
  */
 function isBannedExt(ext)
 {
-    const BANNED_EXT_LIST = PREFERENCES.bannedExts;
+    let BANNED_EXT_LIST = PREFERENCES.bannedExts;
 
     return BANNED_EXT_LIST.includes(ext);
 }

@@ -5,7 +5,6 @@
 // @description         Automatically fills out the Transcript Evaluation Form
 // @version             3.0
 // @include             https://*.edu*/Student/Planning/Advisors/Advise/*
-// @include             https://*.edu*/current-students/records/transcripts/request-evaluation-of-another-colleges-transcript/*
 // @include             https://*.edu*/UI/home/*
 // @exclude             https://*.edu*.tld
 // @require             https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js
@@ -95,6 +94,10 @@ function getPreferences()
 (async function() {
     "use strict";
 
+    if (GM.info.script.options.override.use_matches.length !== 1)
+        alert("WARNING! Transcript evaluation URL not correctly set in matches in " +
+            GM.info.scriptHandler + " settings! There should be only one!");
+
     //////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                          //
     //                              Student Planner Functions                                   //
@@ -122,22 +125,18 @@ function getPreferences()
                     var major = majorText.substring(0, majorText.lastIndexOf("(") - 1);
                     var student = new Student(studentId, major);
 
-                    if (!$.isEmptyObject(PREFERENCES)) {
-                        if (PREFERENCES.urls.colleague.length) {
-                            // Send the data over to Colleague
-                            var $colleagueAnchor = $("<a>", {
-                                href: PREFERENCES.urls.colleague,
-                                target: "_blank",
-                                text: "(Click here to go to Colleague)",
-                                click: PREFERENCES.personal.autoNotes ? moveToNotesTab : null
-                            });
-                        }
-                    }
+                    // Send the data over to Colleague
+                    var $colleagueAnchor = $("<a>", {
+                        href: PREFERENCES.urls.colleague,
+                        target: "_blank",
+                        text: "(Click here to go to Colleague)",
+                        click: PREFERENCES.personal.autoNotes ? moveToNotesTab : null
+                    });
 
                     GM.setValue("trans-eval-bundle", JSON.stringify(student));
                     insertTooltip("Data bundle sent to Colleague. " +
                                     "Use NAE to access. ", this)
-                                    .append(this);
+                                    .append($colleagueAnchor);
                 });
             }
         }
@@ -149,7 +148,7 @@ function getPreferences()
     //    All functions here should apply to the major change form (exclusively, if possible)   //
     //                                                                                          //
     //////////////////////////////////////////////////////////////////////////////////////////////
-    else if (URL_CURRENT.includes(PREFERENCES.urls.transcriptEval)) {
+    else if (URL_CURRENT.includes(GM.info.script.options.override.use_matches[0])) {
         let student = JSON.parse(await GM.getValue("trans-eval-bundle", JSON.stringify(new Student(0,""))));
         GM.deleteValue("trans-eval-bundle");
 

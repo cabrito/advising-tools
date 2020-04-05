@@ -144,7 +144,7 @@ function getPreferences()
     //   All functions here should apply to the grade replace form (exclusively, if possible)   //
     //                                                                                          //
     //////////////////////////////////////////////////////////////////////////////////////////////
-    else if (URL_CURRENT.includes(PREFERENCES.urls.gradeReplace)) {
+    else /*if (URL_CURRENT.includes(PREFERENCES.urls.gradeReplace))*/ {
         let student = JSON.parse(await GM.getValue("grade-replace-bundle", ""));
         GM.deleteValue("grade-replace-bundle");
         //console.log(JSON.stringify(student));

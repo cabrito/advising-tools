@@ -166,7 +166,7 @@ function generateData()
 
     // All information needed to change the student's major
     return {
-        preferences:      : PREFERENCES,
+        preferences       : PREFERENCES,
         studentName       : studentName,
         studentId         : studentId,
         currentMajor      : currentMajor,
@@ -264,6 +264,13 @@ function insertTooltip(msg, selector)
     }).css(STYLE_TOOLTIP)
     .insertAfter($(selector))
     .text(msg);
+}
+
+function getPreferences()
+{
+    let prefs = localStorage.getItem("preferences");
+    return JSON.parse(prefs) || {};
+    // return JSON.parse(await GM.getValue("preferences", "{}"));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
