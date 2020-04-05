@@ -73,19 +73,15 @@ function spFix()
             adjustedBtn.on("click", function () {
                 try {
                     GM.setValue("currentSchedule", JSON.stringify(parseTable()));
-                    if (!$.isEmptyObject(PREFERENCES)) {
-                        if (PREFERENCES.urls.colleague.length) {
-                            // Send the data over to Colleague
-                            var $colleagueAnchor = $("<a>", {
-                                href: PREFERENCES.urls.colleague,
-                                target: "_blank",
-                                text: "(Click here to go to Colleague)"
-                            });
-                        }
-                    }
+                    // Send the data over to Colleague
+                    var $colleagueAnchor = $("<a>", {
+                        href: PREFERENCES.urls.colleague,
+                        target: "_blank",
+                        text: "(Click here to go to Colleague)"
+                    });
                     insertTooltip("Data bundle sent to Colleague. " +
                                     "Use XRGCD or XADF to access. ", this)
-                                    .append(this);
+                                    .append($colleagueAnchor);
                 } catch (error) {
                     console.error(error);
                     alert("ERROR: Unable to read classes from table! (Did you plan everything to the section level?)");
