@@ -12,13 +12,6 @@
 // Helpful switches that can be turned on and off as needed (on = true, off = false)
 const PREFERENCES = getPreferences();
 const BANNED_WARNING_ENABLED = true;
-//const COLOR_ALLOWED             = true;
-
-// Color definitions used, provided that coloring is allowed
-//const COLOR_BANNED_CLASS    = "red";
-//const COLOR_BANNED_TEXT     = "white";
-//const COLOR_FIRST_TERM      = "peachpuff";
-//const COLOR_SECOND_TERM     = "powderblue";
 
 // Here, you can define what you can type into the search box to filter for a specific term. '!' is preferred for speed.
 const FILTER_IDENTIFIER_FIRST   = ["@1", "!1"];

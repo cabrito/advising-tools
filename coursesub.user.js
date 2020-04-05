@@ -14,18 +14,10 @@
 // @grant               GM.deleteValue
 // ==/UserScript==
 
-// You need to change the name and e-mail before using! For the MOVE_TO_NOTES_TAB, set as you like: (true = enabled, false = disabled)
 // *DON'T* TOUCH
 const PREFERENCES = getPreferences();
 const URL_SPFRAG  = "/Student/Planning/Advisors/Advise/";
 const URL_CURRENT = window.location.href;
-/*const ADVISOR_NAME              = "CHANGETHISINTHESCRIPT";
-const ADVISOR_EMAIL             = "CHANGETHISINTHESCRIPT@COLLEGE.edu";
-const MOVE_TO_NOTES_TAB_ENABLED = true;
-
-// In the event that the URL for the course sub form/Student Planner changes, you will need to update this with the correct URLs.
-// MAKE SURE THE LINK GOES IN BETWEEN THE QUOTES!!!
-const URL_COURSE_SUB            = "PUT-THE-LINK-TO-THE-COURSE-SUB-FORM-HERE-IN-BETWEEN-THESE-QUOTES";*/
 
 // Information regarding the MutationObserver
 var MutationObserver    = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
@@ -368,7 +360,7 @@ function isSubstitutable($columns)
 }
 
 /**
- *  Determines if the row is a "Requirements" row, versus a class on the schedule or the OC courses table, based on its column information.
+ *  Determines if the row is a "Requirements" row, versus a class on the schedule or the courses table, based on its column information.
  *  @return boolean
  */
 function isRequirementsRow($columns)

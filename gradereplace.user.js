@@ -14,12 +14,6 @@
 // @grant               GM.deleteValue
 // ==/UserScript==
 
-// Set as you like: (true = enabled, false = disabled)
-//const MOVE_TO_NOTES_TAB_ENABLED = true;
-
-// In the event that the URL for the course sub form/Student Planner changes, you will need to update this with the correct URLs.
-// MAKE SURE THE LINK GOES IN BETWEEN THE QUOTES!!!
-//const URL_REPLACE_FORM          = "PUT-THE-LINK-TO-THE-GPA-UPDATE-FORM-HERE-IN-BETWEEN-THESE-QUOTES";
 // *DON'T* TOUCH
 const PREFERENCES = getPreferences();
 const URL_FRAG_SP = "/Student/Planning/Advisors/Advise/";

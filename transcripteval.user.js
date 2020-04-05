@@ -14,15 +14,6 @@
 // @grant               GM.deleteValue
 // ==/UserScript==
 
-// Set as you like: (true = enabled, false = disabled)
-//const MOVE_TO_NOTES_TAB_ENABLED = true;
-
-// In the event that the URL for the transcript eval form/Student Planner changes, you will need to update this with the correct URLs.
-// MAKE SURE THE LINK GOES IN BETWEEN THE QUOTES!!!
-
-
-//const URL_COLLEAGUE     = "https://chelsea.odessa.edu/UI/home/index.html";
-
 // *DON'T* TOUCH
 const PREFERENCES = getPreferences();
 const URL_CURRENT = window.location.href;
