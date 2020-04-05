@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name                Advising Scripts Configuration
+// @name                Configuration
 // @author              cabrito
 // @namespace           https://github.com/cabrito
 // @description         Bundle of tools useful to make an academic advisor's life much easier in Colleague/Student Planning
-// @version             0.1
+// @version             4.0
 // @include             https://*.edu/Student/Planning/Advisors/Advise/*
 // @include             https://*.edu/Student/UserProfile/Preferences
 // @require             https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js

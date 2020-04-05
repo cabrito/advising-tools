@@ -3,7 +3,7 @@
 // @author              cabrito
 // @namespace           https://github.com/cabrito
 // @description         Automatically fills out registration forms with the click of a button!
-// @version             3.0
+// @version             4.0
 // @include             https://*.edu*/UI/home/*
 // @include             https://*.edu*/Student/Planning/Advisors/Advise/*
 // @exclude             https://*edu*.tld

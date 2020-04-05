@@ -3,7 +3,7 @@
 // @author              cabrito
 // @namespace           https://github.com/cabrito
 // @description         Aids the advisor to quickly distinguish between first and second long semester terms in Student Planner.
-// @version             3.0
+// @version             4.0
 // @include             https://*.edu/Student/Planning/Advisors/Advise/*
 // @grant               GM.info
 // @require             https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js

@@ -3,7 +3,7 @@
 // @author              cabrito
 // @namespace           https://github.com/cabrito
 // @description         Automatically fills out the Transcript Evaluation Form
-// @version             3.0
+// @version             4.0
 // @include             https://*.edu*/Student/Planning/Advisors/Advise/*
 // @include             https://*.edu*/UI/home/*
 // @exclude             https://*.edu*.tld
