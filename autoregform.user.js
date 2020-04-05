@@ -73,6 +73,7 @@ function spFix()
             adjustedBtn.on("click", function () {
                 try {
                     GM.setValue("currentSchedule", JSON.stringify(parseTable()));
+                    console.log(JSON.stringify(parseTable()));
                     // Send the data over to Colleague
                     var $colleagueAnchor = $("<a>", {
                         href: PREFERENCES.urls.colleague,
