@@ -19,7 +19,7 @@
 
 // In the event that the URL for the transcript eval form/Student Planner changes, you will need to update this with the correct URLs.
 // MAKE SURE THE LINK GOES IN BETWEEN THE QUOTES!!!
-//const URL_REPLACE_FORM  = "PUT-THE-LINK-TO-THE-TRANSCRIPT-EVALUATION-FORM-HERE-IN-BETWEEN-THESE-QUOTES";
+
 
 //const URL_COLLEAGUE     = "https://chelsea.odessa.edu/UI/home/index.html";
 
@@ -27,6 +27,7 @@
 const PREFERENCES = getPreferences();
 const URL_CURRENT = window.location.href;
 const URL_FRAG_SP = "/Student/Planning/Advisors/Advise/";     // You just need a piece of the URL
+const URL_TRANS_EVAL  = GM.info.script.options.override.use_matches || [];
 
 // Information regarding the MutationObserver for Colleague
 var MutationObserver    = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
@@ -94,7 +95,7 @@ function getPreferences()
 (async function() {
     "use strict";
 
-    if (GM.info.script.options.override.use_matches.length !== 1)
+    if (URL_TRANS_EVAL.length !== 1)
         alert("WARNING! Transcript evaluation URL not correctly set in matches in " +
             GM.info.scriptHandler + " settings! There should be only one!");
 
@@ -148,7 +149,7 @@ function getPreferences()
     //    All functions here should apply to the major change form (exclusively, if possible)   //
     //                                                                                          //
     //////////////////////////////////////////////////////////////////////////////////////////////
-    else if (URL_CURRENT.includes(GM.info.script.options.override.use_matches[0])) {
+    else if (URL_CURRENT.includes(URL_TRANS_EVAL[0])) {
         let student = JSON.parse(await GM.getValue("trans-eval-bundle", JSON.stringify(new Student(0,""))));
         GM.deleteValue("trans-eval-bundle");
 
@@ -289,7 +290,7 @@ async function colleagueFix() {
                             GM.setValue("trans-eval-bundle", JSON.stringify(student));
 
                             $("#btnFormCancelAll").click();
-                            window.open(GM.info.script.options.override.use_matches[0], "_blank");
+                            window.open(URL_TRANS_EVAL[0], "_blank");
                             $(this).remove();
                         })
                         .css({"background-color":"red"})
