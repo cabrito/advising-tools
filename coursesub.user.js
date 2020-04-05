@@ -42,11 +42,6 @@ function mutationHandler() {
 
     // If we're on Student Planning...
     if (URL_CURRENT.includes(URL_SPFRAG)) {
-        if ($.isEmptyObject(PREFERENCES)) {
-            insertTooltip("WARNING! Advisor preferences not set! " +
-                GM.info.script.name + " script may not work!", $("#user-profile-right"));
-            return;
-        }
         observer.observe(document, obsConfig);
     }
     // Otherwise, do stuff when we're on the Course Substitution page.

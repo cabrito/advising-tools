@@ -289,7 +289,7 @@ async function colleagueFix() {
                             GM.setValue("trans-eval-bundle", JSON.stringify(student));
 
                             $("#btnFormCancelAll").click();
-                            window.open(PREFERENCES.urls.transcriptEval, "_blank");
+                            window.open(GM.info.script.options.override.use_matches[0], "_blank");
                             $(this).remove();
                         })
                         .css({"background-color":"red"})

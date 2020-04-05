@@ -33,10 +33,6 @@ var obsConfig           = {childList: true,
 // For compatibility and security, we use an IIFE (Immediately invoked function expression)
 (function() {
     "use strict";   // Makes the code "safer" to prevent us from using undeclared variables.
-    if ($.isEmptyObject(PREFERENCES)) {
-        insertTooltip("WARNING! Advisor preferences not set! " +
-            GM.info.script.name + " script with colors may not work!", $("#user-profile-right"));
-    }
 
     /* Begin document observation */
     observer.observe(document, obsConfig);

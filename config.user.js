@@ -4,12 +4,23 @@
 // @namespace           https://github.com/cabrito
 // @description         Bundle of tools useful to make an academic advisor's life much easier in Colleague/Student Planning
 // @version             0.1
+// @include             https://*.edu/Student/Planning/Advisors/Advise/*
 // @include             https://*.edu/Student/UserProfile/Preferences
 // @require             https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js
 // ==/UserScript==
 
+const URL_FRAG_SP = "/Student/Planning/Advisors/Advise/";
+const URL_CURRENT = window.location.href;
+
 (function() {
     "use strict";
+
+    if (URL_CURRENT.includes(URL_FRAG_SP)) {
+        if ($.isEmptyObject(getPreferences())) {
+            insertTooltip("WARNING! Advisor preferences not set! Scripts may not work!", $("#user-profile-right"));
+            return;
+        }
+    }
 
     // Set up the webpage
     generateForm();
@@ -243,4 +254,22 @@ function resetPreferences()
 function processBannedArray(array) {
     //return JSON.stringify(array).replace(/[\[\]\"\']/g, '');
     return JSON.stringify(array).replace(/[^A-Za-z0-9\,]/g, '');
+}
+
+/**
+ *  Inserts a tooltip after the selected element
+ *  @param msg  The message to display to the user.
+ *  @return jQuery object for chaining
+ */
+function insertTooltip(msg, selector)
+{
+    let unixTime = Date.now();
+    if ($("#tooltip-" + unixTime).length)   $("#tooltip-" + unixTime).remove();
+    const STYLE_TOOLTIP = {"font-weight":"bold",
+                            "color":"#ff0000"};
+    return $("<p>", {
+        id:  "tooltip-" + unixTime
+    }).css(STYLE_TOOLTIP)
+    .insertAfter($(selector))
+    .text(msg);
 }

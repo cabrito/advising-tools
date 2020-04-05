@@ -101,10 +101,6 @@ function getPreferences()
     //                                                                                          //
     //////////////////////////////////////////////////////////////////////////////////////////////
     if (URL_CURRENT.includes(URL_FRAG_SP)) {
-        if ($.isEmptyObject(PREFERENCES)) {
-            insertTooltip("WARNING! Advisor preferences not set! " +
-                GM.info.script.name + " script may not work!", $("#user-profile-right"));
-        }
         var $addTermBtn = $("input[type='button'][value='Add a Term']").prop("id", "add-term-btn");
         var gradeReplaceBtn = new Button($addTermBtn, "grade-replace-btn", "Start Grade Replacement");
         gradeReplaceBtn.floatRight()

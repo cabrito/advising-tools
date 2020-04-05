@@ -42,11 +42,6 @@ const LOCATION = 6;
 async function mutationHandler () {
     // If we're on Student Planner...
     if (URL_CURRENT.includes(URL_SPFRAG)) {
-        if ($.isEmptyObject(PREFERENCES)) {
-            insertTooltip("WARNING! Advisor preferences not set! " +
-                GM.info.script.name + " script may not work!", $("#user-profile-right"));
-            return;
-        }
         spFix();
     }
     // Otherwise, we're in Colleague.

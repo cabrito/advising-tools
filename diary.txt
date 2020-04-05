@@ -2,6 +2,9 @@
     Aha! I can just use @exclude to patch security problems related to things like hardvard.edubadwebsite.com!
     Then just let the user specify the URLs in the user configuration page.
 
+    AUTOREGFORM SCRIPT GOES INTO INFINITE LOOP.
+    GRADE REPLACEMENT SCRIPT AND OTHERS DON'T INSERT WARNING CORRECTLY. NEED TO MAKE SURE THAT FUNCTION EXISTS!
+
 1 April, 2020
     I'm going to try a one-and-done approach to the URL system. Since Tampermonkey/Greasemonkey permit the user
     to set the includes via their GUI, I think that method is preferred, as it removes one avenue for security holes.
