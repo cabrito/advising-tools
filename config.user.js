@@ -138,6 +138,10 @@ function generateForm()
             <label for='url-majorchange'>Major Change Form: </label>
             <input id='url-majorchange' type='text' name='url-majorchange' size='50'>
         </div>
+        <p style="color:#ff0000">
+            <strong>FOR THE TRANSCRIPT EVALUATION FORM, PLEASE GO INTO TRANSCRIPT EVALUATION
+            SCRIPT SETTINGS AND SET THE URL IN THE LOWER "User matches" BOX!</strong>
+        </p>
         <!-- <div>
             <label for='url-transcripteval'>Transcript Evaluation Form: </label>
             <input id='url-transcripteval' type='text' name='url-transcripteval' size='50'>
