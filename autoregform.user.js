@@ -15,15 +15,14 @@
 // ==/UserScript==
 
 // Helpful switches that can be enabled and disabled as-needed.
-const PREFERENCES                   = getPreferences();
 const URL_SPFRAG                    = "/Student/Planning/Advisors/Advise/";     // Fragment of URL used in Student Planner
 const STILL_ON_EIGHT_WEEKS_SYSTEM   = true;
 const FIX_TYPOS_ENABLED             = true;
-// const URL_COLLEAGUE                 = "PUT-THE-LINK-TO-COLLEAGUE-HERE-IN-BETWEEN-THESE-QUOTES";
 const PRETEXT_BREAKER               = "Class Key  | Course | Number | Section |   Time & Day   | Instructor";
 const POSTTEXT_BREAKER              = "----------------------";
 
 // *DON'T* TOUCH
+const PREFERENCES = getPreferences();
 const URL_CURRENT = window.location.href;
 
 // Information regarding the MutationObserver for both Colleague and Student Planner
