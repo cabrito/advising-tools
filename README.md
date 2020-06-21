@@ -4,7 +4,7 @@ Various scripts designed to be used with Student Planning/Colleague to make an a
 Click each of the following links to install the scripts:
 
 - [Automajor](../../raw/master/automajor.user.js)
-- [Autoregform](../../master/autoregform.user.js)
+- [Autoregform](../../raw/master/autoregform.user.js)
 - [Configuration](../../raw/master/config.user.js)
 - [Course Sub](../../raw/master/coursesub.user.js)
 - [Grade Replace](../../raw/master/gradereplace.user.js)
