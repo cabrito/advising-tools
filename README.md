@@ -3,14 +3,14 @@ Various scripts designed to be used with Student Planning/Colleague to make an a
 
 Click each of the following links to install the scripts:
 
-- [Automajor](/raw/master/automajor.user.js)
-- [Autoregform](/raw/master/autoregform.user.js)
-- [Configuration](/raw/master/config.user.js)
-- [Course Sub](/raw/master/coursesub.user.js)
-- [Grade Replace](/raw/master/gradereplace.user.js)
-- [Quickprint](/raw/master/quickprint.user.js)
-- [Term Filter](/raw/master/termfilter.user.js)
-- [Transcript Eval](/raw/master/transcripteval.user.js)
+- [Automajor](../../raw/master/automajor.user.js)
+- [Autoregform](../../master/autoregform.user.js)
+- [Configuration](../../raw/master/config.user.js)
+- [Course Sub](../../raw/master/coursesub.user.js)
+- [Grade Replace](../../raw/master/gradereplace.user.js)
+- [Quickprint](../../raw/master/quickprint.user.js)
+- [Term Filter](../../raw/master/termfilter.user.js)
+- [Transcript Eval](../../raw/master/transcripteval.user.js)
 
 ## Usage
 You will need to go to "Account Preferences" at the top in the person menu, and set information such as your name, email address, and the URLs for each of the forms.
